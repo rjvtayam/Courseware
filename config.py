@@ -9,14 +9,24 @@ class Config:
     
     # Handle PostgreSQL Database URL from Render
     DATABASE_URL = environ.get('DATABASE_URL')
+    print("Raw DATABASE_URL from environment:", DATABASE_URL)  # Debug print
+    
     if DATABASE_URL:
         # Render provides postgres:// but SQLAlchemy requires postgresql://
         if DATABASE_URL.startswith('postgres://'):
             DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+            print("Modified DATABASE_URL:", DATABASE_URL)  # Debug print
+        elif DATABASE_URL.startswith('postgresql://'):
+            print("URL already in correct format:", DATABASE_URL)  # Debug print
+        else:
+            print("WARNING: Database URL doesn't start with postgres:// or postgresql://:", DATABASE_URL)  # Debug print
         SQLALCHEMY_DATABASE_URI = DATABASE_URL
     else:
+        print("No DATABASE_URL found in environment, using default")  # Debug print
         # Fallback for local development
         SQLALCHEMY_DATABASE_URI = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=require'
+    
+    print("Final SQLALCHEMY_DATABASE_URI:", SQLALCHEMY_DATABASE_URI)  # Debug print
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     

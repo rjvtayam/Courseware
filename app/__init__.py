@@ -16,9 +16,19 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
+    # Debug print for database URL
+    print("Database URL in create_app:", app.config['SQLALCHEMY_DATABASE_URI'])
+    
     # Ensure we're using PostgreSQL
-    if not app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgresql://'):
-        raise ValueError("Database must be PostgreSQL")
+    if not (app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgresql://') or 
+            app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://')):
+        print("ERROR: Invalid database URL format:", app.config['SQLALCHEMY_DATABASE_URI'])
+        raise ValueError(f"Database must be PostgreSQL. Current URL: {app.config['SQLALCHEMY_DATABASE_URI']}")
+
+    # Convert postgres:// to postgresql:// if needed
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
+        app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
+        print("Converted database URL:", app.config['SQLALCHEMY_DATABASE_URI'])
 
     db.init_app(app)
     login_manager.init_app(app)
