@@ -23,9 +23,47 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('courses.index') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-book"></i> Courses
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">BSIT Programs</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='web-mobile') }}">Web & Mobile Development</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='animation') }}">Animation & Motion Graphics</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='networking') }}">Networking</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='service-management') }}">Service Management</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">BSCS Programs</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='graphics') }}">Graphics & Visualization</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='game-dev') }}">Game Animation</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">BSIS Programs</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='info-security') }}">Information Security</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='data-analytics') }}">Data Analytics</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-tools"></i> Resources
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">Learning Platforms</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='platforms') }}">Online Platforms</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='documentation') }}">Documentation</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Tools & Software</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='development-tools') }}">Development Tools</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='design-tools') }}">Design Software</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Community</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='forums') }}">Forums & Communities</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='youtube') }}">YouTube Channels</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('community.index') }}">
+                            <i class="fas fa-users"></i> Community
                         </a>
                     </li>
                     {% if current_user.is_authenticated %}
@@ -83,8 +121,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.register') }}">
-                                <i class="fas fa-user-plus"></i> Register
+                            <a class="nav-link btn btn-primary text-white px-4" href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-user-plus"></i> Create Account
                             </a>
                         </li>
                     {% endif %}

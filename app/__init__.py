@@ -47,11 +47,12 @@ def create_app():
         db.create_all()
         
         # Import and register blueprints
-        from app.routes import main, auth, courses, assignments
+        from app.routes import main, auth, courses, assignments, resources
         app.register_blueprint(main.bp)
         app.register_blueprint(auth.bp)
         app.register_blueprint(courses.bp)
         app.register_blueprint(assignments.bp)
+        app.register_blueprint(resources.bp)
         
         from app.routes import feedback, notifications, search, dashboard
         app.register_blueprint(feedback.bp)

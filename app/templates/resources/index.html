@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Learning Resources</h1>
+    
+    <div class="row g-4">
+        {% for category_id, category in categories.items() %}
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category.name }}</h5>
+                    <div class="resource-list">
+                        {% for resource in category.resources %}
+                        <div class="resource-item mb-3 p-3 border rounded">
+                            <h6>{{ resource.name }}</h6>
+                            <p class="text-muted small mb-2">{{ resource.description }}</p>
+                            <div class="mb-2">
+                                {% for category in resource.categories %}
+                                <span class="badge bg-secondary me-1">{{ categories[category].name }}</span>
+                                {% endfor %}
+                            </div>
+                            <a href="{{ resource.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-external-link-alt me-1"></i> Visit Resource
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
