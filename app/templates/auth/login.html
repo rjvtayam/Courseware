@@ -1,41 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Sign in to your account
-            </h2>
-        </div>
-        <form class="mt-8 space-y-6" action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    {{ form.email.label(class="sr-only") }}
-                    {{ form.email(class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder="Email address") }}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h4 class="mb-0">Welcome to Enlighten ED</h4>
                 </div>
-                <div>
-                    {{ form.password.label(class="sr-only") }}
-                    {{ form.password(class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm", placeholder="Password") }}
-                </div>
-            </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <p class="lead">Join our learning community</p>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('auth.google_login') }}" class="btn btn-light btn-lg border d-flex align-items-center justify-content-center">
+                            <img src="{{ url_for('static', filename='images/google-icon.png') }}" alt="Google" class="me-2" style="width: 24px;">
+                            Continue with Google
+                        </a>
+                        <a href="{{ url_for('auth.github_login') }}" class="btn btn-dark btn-lg d-flex align-items-center justify-content-center">
+                            <i class="fab fa-github me-2"></i>
+                            Continue with GitHub
+                        </a>
+                    </div>
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    {{ form.remember_me(class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded") }}
-                    {{ form.remember_me.label(class="ml-2 block text-sm text-gray-900") }}
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            By continuing, you agree to our 
+                            <a href="{{ url_for('main.terms') }}" class="text-decoration-none">Terms of Service</a> and 
+                            <a href="{{ url_for('main.privacy') }}" class="text-decoration-none">Privacy Policy</a>
+                        </small>
+                    </div>
                 </div>
             </div>
-
-            <div>
-                {{ form.submit(class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500") }}
-            </div>
-        </form>
-        <div class="text-center">
-            <p class="text-sm text-gray-600">
-                New User? <a href="{{ url_for('auth.register') }}" class="font-medium text-indigo-600 hover:text-indigo-500">Register here</a>
-            </p>
         </div>
     </div>
 </div>
