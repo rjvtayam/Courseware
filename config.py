@@ -9,19 +9,17 @@ class Config:
     
     # Handle PostgreSQL Database URL from Render
     DATABASE_URL = environ.get('DATABASE_URL')
-    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    if DATABASE_URL:
+        # Use the DATABASE_URL from environment
+        SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    else:
+        # Fallback for local development
+        SQLALCHEMY_DATABASE_URI = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=require'
     
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL or \
-        'sqlite:///' + path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     UPLOAD_FOLDER = path.join(basedir, 'app/static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     
     # Elasticsearch configuration
-    ELASTICSEARCH_URL = environ.get('ELASTICSEARCH_URL') or 'http://localhost:9200'
-    
-    # WebSocket configuration
-    SOCKET_IO_PING_TIMEOUT = 10
-    SOCKET_IO_PING_INTERVAL = 25
+    ELASTICSEARCH_URL = environ.get('ELASTICSEARCH_URL')

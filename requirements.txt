@@ -12,3 +12,4 @@ elasticsearch-dsl==8.11.0
 flask-elasticsearch==0.2.5
 gunicorn==21.2.0
 psycopg2-binary==2.9.9  # PostgreSQL driver
+SQLAlchemy==2.0.23
