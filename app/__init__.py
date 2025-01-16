@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO
 from elasticsearch import Elasticsearch
 from config import Config
+import os
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -14,6 +15,10 @@ elasticsearch = None
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Ensure we're using PostgreSQL
+    if not app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgresql://'):
+        raise ValueError("Database must be PostgreSQL")
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -26,7 +31,7 @@ def create_app():
 
     with app.app_context():
         # Import models
-        from app.models.models import User, Course, Assignment, Feedback, Grade, Notification
+        from app.models.models import User, Course, Assignment, Feedback, Grade, Notification, Comment
         
         # Create all database tables
         db.create_all()
