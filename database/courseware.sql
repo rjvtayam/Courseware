@@ -75,11 +75,13 @@ CREATE TABLE IF NOT EXISTS feedback (
     assignment_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
     teacher_id INTEGER NOT NULL,
+    submission_id INTEGER NOT NULL,
     text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (assignment_id) REFERENCES assignment(id),
     FOREIGN KEY (student_id) REFERENCES "user"(id),
-    FOREIGN KEY (teacher_id) REFERENCES "user"(id)
+    FOREIGN KEY (teacher_id) REFERENCES "user"(id),
+    FOREIGN KEY (submission_id) REFERENCES submission(id)
 );
 
 -- Grades table
@@ -114,6 +116,7 @@ CREATE INDEX IF NOT EXISTS idx_enrollment_course ON enrollment(course_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_assignment ON feedback(assignment_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_student ON feedback(student_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_teacher ON feedback(teacher_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_submission ON feedback(submission_id);
 CREATE INDEX IF NOT EXISTS idx_grade_assignment ON grade(assignment_id);
 CREATE INDEX IF NOT EXISTS idx_grade_student ON grade(student_id);
 CREATE INDEX IF NOT EXISTS idx_notification_user ON notification(user_id);
