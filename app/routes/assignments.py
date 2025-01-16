@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 import os
-from app.models import Assignment, Submission, Comment, Course, db
+from app.models import Assignment, Submission, Comment, Course
+from app import db
 from app.forms.assignments import AssignmentForm, SubmissionForm, CommentForm
 
 bp = Blueprint('assignments', __name__)

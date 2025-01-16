@@ -24,19 +24,23 @@ def create_app():
     if app.config.get('ELASTICSEARCH_URL'):
         elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
 
-    # Import models
-    from app.models.models import User, Course, Assignment, Feedback, Grade, Notification
-    
-    # Import and register blueprints
-    from app.routes import auth, courses, assignments
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(courses.bp)
-    app.register_blueprint(assignments.bp)
-    
-    from app.routes import feedback, notifications, search, dashboard
-    app.register_blueprint(feedback.bp)
-    app.register_blueprint(notifications.bp)
-    app.register_blueprint(search.bp)
-    app.register_blueprint(dashboard.bp)
+    with app.app_context():
+        # Import models
+        from app.models.models import User, Course, Assignment, Feedback, Grade, Notification
+        
+        # Create all database tables
+        db.create_all()
+        
+        # Import and register blueprints
+        from app.routes import auth, courses, assignments
+        app.register_blueprint(auth.bp)
+        app.register_blueprint(courses.bp)
+        app.register_blueprint(assignments.bp)
+        
+        from app.routes import feedback, notifications, search, dashboard
+        app.register_blueprint(feedback.bp)
+        app.register_blueprint(notifications.bp)
+        app.register_blueprint(search.bp)
+        app.register_blueprint(dashboard.bp)
 
     return app

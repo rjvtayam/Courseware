@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     feedback_given = db.relationship('Feedback', backref='teacher', lazy='dynamic',
                                    foreign_keys='Feedback.teacher_id')
     grades = db.relationship('Grade', backref='student', lazy='dynamic')
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -50,6 +51,7 @@ class Assignment(db.Model):
     submissions = db.relationship('Submission', backref='assignment', lazy='dynamic')
     feedback = db.relationship('Feedback', backref='assignment', lazy='dynamic')
     grades = db.relationship('Grade', backref='assignment', lazy='dynamic')
+    comments = db.relationship('Comment', backref='assignment', lazy='dynamic')
 
 class Enrollment(db.Model):
     __tablename__ = 'enrollment'
@@ -92,6 +94,17 @@ class Submission(db.Model):
     
     # Relationships
     feedback = db.relationship('Feedback', backref='submission', lazy='dynamic')
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref='comments')
+    assignment = db.relationship('Assignment', backref='comments')
 
 @login_manager.user_loader
 def load_user(id):

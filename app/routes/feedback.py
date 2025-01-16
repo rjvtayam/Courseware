@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, flash, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Submission, Feedback, Notification, db
+from app.models import Submission, Feedback, Notification
+from app import db
 
 bp = Blueprint('feedback', __name__)
 

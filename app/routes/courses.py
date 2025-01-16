@@ -1,7 +1,19 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from app.models import Course, db
-from app.forms.courses import CourseForm
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired, Length
+from app.models import Course
+from app import db
+
+class CourseForm(FlaskForm):
+    title = StringField('Course Title', 
+                       validators=[DataRequired(), 
+                                 Length(min=3, max=100)])
+    description = TextAreaField('Course Description',
+                              validators=[DataRequired(),
+                                        Length(min=10, max=500)])
+    submit = SubmitField('Create Course')
 
 bp = Blueprint('courses', __name__)
 

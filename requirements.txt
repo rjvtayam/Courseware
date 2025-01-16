@@ -3,11 +3,12 @@ Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 Flask-WTF==1.2.1
 python-dotenv==1.0.0
-mysqlclient==2.2.1
 Werkzeug==3.0.1
 python-dateutil==2.8.2
 flask-socketio==5.3.6
 eventlet==0.33.3
 elasticsearch==8.11.1
+elasticsearch-dsl==8.11.0
 flask-elasticsearch==0.2.5
 gunicorn==21.2.0
+psycopg2-binary==2.9.9  # PostgreSQL driver

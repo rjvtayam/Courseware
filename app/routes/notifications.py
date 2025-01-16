@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, render_template
 from flask_login import login_required, current_user
 from flask_socketio import emit
-from app.models import Notification, db
-from app import socketio
+from app.models import Notification
+from app import socketio, db
 
 bp = Blueprint('notifications', __name__)
 
