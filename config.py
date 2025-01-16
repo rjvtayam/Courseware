@@ -10,7 +10,9 @@ class Config:
     # Handle PostgreSQL Database URL from Render
     DATABASE_URL = environ.get('DATABASE_URL')
     if DATABASE_URL:
-        # Use the DATABASE_URL from environment
+        # Render provides postgres:// but SQLAlchemy requires postgresql://
+        if DATABASE_URL.startswith('postgres://'):
+            DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
         SQLALCHEMY_DATABASE_URI = DATABASE_URL
     else:
         # Fallback for local development
