@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
     feedback_given = db.relationship('Feedback', backref='teacher', lazy='dynamic',
                                    foreign_keys='Feedback.teacher_id')
     grades = db.relationship('Grade', backref='student', lazy='dynamic')
-    comments = db.relationship('Comment', backref='user', lazy='dynamic')
+    user_comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -49,9 +49,7 @@ class Assignment(db.Model):
     
     # Relationships
     submissions = db.relationship('Submission', backref='assignment', lazy='dynamic')
-    feedback = db.relationship('Feedback', backref='assignment', lazy='dynamic')
-    grades = db.relationship('Grade', backref='assignment', lazy='dynamic')
-    comments = db.relationship('Comment', backref='assignment', lazy='dynamic')
+    assignment_comments = db.relationship('Comment', backref='assignment', lazy='dynamic')
 
 class Enrollment(db.Model):
     __tablename__ = 'enrollment'
@@ -63,7 +61,7 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(20))  # feedback, grade, course_update, etc.
+    type = db.Column(db.String(20))
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -91,9 +89,6 @@ class Submission(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     file_path = db.Column(db.String(255), nullable=False)
     submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    feedback = db.relationship('Feedback', backref='submission', lazy='dynamic')
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,10 +96,6 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    user = db.relationship('User', backref='comments')
-    assignment = db.relationship('Assignment', backref='comments')
 
 @login_manager.user_loader
 def load_user(id):
