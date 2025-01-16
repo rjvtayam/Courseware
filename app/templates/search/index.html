@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        {% if query %}
+            <h1 class="text-2xl font-semibold text-gray-900">Search Results for "{{ query }}"</h1>
+            
+            {% if courses %}
+                <div class="mt-6">
+                    <h2 class="text-xl font-medium text-gray-900 mb-4">Courses</h2>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for course in courses %}
+                            <div class="bg-white shadow rounded-lg p-4">
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    <a href="{{ url_for('courses.view', id=course.id) }}" class="hover:text-indigo-600">
+                                        {{ course.title }}
+                                    </a>
+                                </h3>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    {{ course.description[:150] }}...
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignments %}
+                <div class="mt-6">
+                    <h2 class="text-xl font-medium text-gray-900 mb-4">Assignments</h2>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {% for assignment in assignments %}
+                            <div class="bg-white shadow rounded-lg p-4">
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    <a href="{{ url_for('assignments.view', id=assignment.id) }}" class="hover:text-indigo-600">
+                                        {{ assignment.title }}
+                                    </a>
+                                </h3>
+                                <p class="mt-2 text-sm text-gray-600">
+                                    {{ assignment.description[:150] }}...
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if not courses and not assignments %}
+                <p class="mt-4 text-gray-600">No results found.</p>
+            {% endif %}
+        {% else %}
+            <div class="text-center">
+                <h1 class="text-2xl font-semibold text-gray-900">Search Courses and Assignments</h1>
+                <p class="mt-2 text-gray-600">Enter a search term to find courses and assignments.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

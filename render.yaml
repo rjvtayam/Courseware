@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: courseware
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn "app:create_app()" --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: ELASTICSEARCH_URL
+        sync: false
