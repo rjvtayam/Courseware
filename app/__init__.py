@@ -47,7 +47,8 @@ def create_app():
         db.create_all()
         
         # Import and register blueprints
-        from app.routes import auth, courses, assignments
+        from app.routes import main, auth, courses, assignments
+        app.register_blueprint(main.bp)
         app.register_blueprint(auth.bp)
         app.register_blueprint(courses.bp)
         app.register_blueprint(assignments.bp)

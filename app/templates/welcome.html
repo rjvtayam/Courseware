@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 mb-4">Welcome to Enlighten ED</h1>
+                <p class="lead mb-4">Empowering education through innovative learning experiences. Join our community of learners and educators today.</p>
+                {% if not current_user.is_authenticated %}
+                <div class="hero-buttons">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">Sign Up</a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('courses.index') }}" class="btn btn-primary btn-lg">Browse Courses</a>
+                {% endif %}
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="Education illustration" class="hero-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Enlighten ED?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Quality Education</h3>
+                    <p>Access high-quality courses designed by expert educators.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Interactive Learning</h3>
+                    <p>Engage with peers and instructors in real-time discussions.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Flexible Schedule</h3>
+                    <p>Learn at your own pace with 24/7 access to course materials.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">1000+</h3>
+                    <p class="stat-label">Students Enrolled</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">50+</h3>
+                    <p class="stat-label">Expert Instructors</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">100+</h3>
+                    <p class="stat-label">Courses Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cta-section py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Start Learning?</h2>
+        <p class="lead mb-4">Join thousands of students already learning on Enlighten ED</p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Create Free Account</a>
+        {% else %}
+        <a href="{{ url_for('courses.index') }}" class="btn btn-primary btn-lg">Explore Courses</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
