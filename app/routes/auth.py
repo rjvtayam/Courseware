@@ -31,7 +31,7 @@ def google_login():
     # scopes that let you retrieve user's profile from Google
     request_uri = google_client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
+        redirect_uri=url_for('auth.google_callback', _external=True),
         scope=['openid', 'email', 'profile'],
     )
     return redirect(request_uri)
@@ -42,7 +42,7 @@ def github_login():
     github_auth_url = f"https://github.com/login/oauth/authorize"
     request_uri = github_client.prepare_request_uri(
         github_auth_url,
-        redirect_uri=request.base_url + "/callback",
+        redirect_uri=url_for('auth.github_callback', _external=True),
         scope=['user:email']
     )
     return redirect(request_uri)
@@ -58,7 +58,7 @@ def google_callback():
     token_url, headers, body = google_client.prepare_token_request(
         token_endpoint,
         authorization_response=request.url,
-        redirect_url=request.base_url,
+        redirect_url=url_for('auth.google_callback', _external=True),
         code=code,
     )
     token_response = requests.post(
@@ -109,7 +109,7 @@ def github_callback():
     token_url, headers, body = github_client.prepare_token_request(
         github_token_url,
         authorization_response=request.url,
-        redirect_url=request.base_url,
+        redirect_url=url_for('auth.github_callback', _external=True),
         code=code,
     )
     

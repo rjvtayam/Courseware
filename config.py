@@ -51,3 +51,10 @@ class Config:
     
     GITHUB_CLIENT_ID = environ.get('GITHUB_CLIENT_ID')
     GITHUB_CLIENT_SECRET = environ.get('GITHUB_CLIENT_SECRET')
+    
+    # Google Drive Configuration
+    GOOGLE_DRIVE_CLIENT_ID = environ.get('GOOGLE_DRIVE_CLIENT_ID')
+    GOOGLE_DRIVE_CLIENT_SECRET = environ.get('GOOGLE_DRIVE_CLIENT_SECRET')
+    DRIVE_SCOPES = [
+        'https://www.googleapis.com/auth/drive.file'
+    ]

@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    courses_teaching = db.relationship('Course', backref='teacher', lazy='dynamic')
+    courses_teaching = db.relationship('Course', backref='instructor', lazy='dynamic')
     courses_enrolled = db.relationship('Course', secondary='enrollment',
                                      backref=db.backref('students', lazy='dynamic'))
     notifications = db.relationship('Notification', backref='user', lazy='dynamic')
@@ -51,12 +51,16 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(20), default='active')  # active, archived
+    category = db.Column(db.String(50))
+    # Google Drive fields for course materials
+    video_folder_id = db.Column(db.String(100))  # Folder ID for course videos
+    material_folder_id = db.Column(db.String(100))  # Folder ID for course materials
     
     # Relationships
     assignments = db.relationship('Assignment', backref='course', lazy='dynamic')
+    contents = db.relationship('CourseContent', backref='course', lazy=True)
 
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -117,6 +121,20 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class CourseContent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    content_type = db.Column(db.String(50))  # 'video', 'document', 'tutorial'
+    drive_file_id = db.Column(db.String(100))  # Google Drive file ID
+    drive_view_link = db.Column(db.String(255))  # Shareable link
+    order = db.Column(db.Integer)  # For ordering content within course
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    course = db.relationship('Course', backref=db.backref('contents', lazy=True))
 
 @login_manager.user_loader
 def load_user(id):
