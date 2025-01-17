@@ -122,17 +122,17 @@
                     
                     <div class="card-body p-4">
                         <div class="d-grid gap-3">
-                            <button onclick="window.location.href='{{ url_for('auth.google_login') }}'" 
-                                    class="oauth-btn google-btn d-flex align-items-center justify-content-center">
+                            <a href="{{ url_for('auth.google_login') }}" 
+                               class="oauth-btn google-btn d-flex align-items-center justify-content-center">
                                 <img src="{{ url_for('static', filename='images/google-icon.png') }}" alt="Google">
                                 Continue with Google
-                            </button>
+                            </a>
                             
-                            <button onclick="window.location.href='{{ url_for('auth.github_login') }}'"
-                                    class="oauth-btn github-btn d-flex align-items-center justify-content-center">
+                            <a href="{{ url_for('auth.github_login') }}"
+                               class="oauth-btn github-btn d-flex align-items-center justify-content-center">
                                 <i class="fab fa-github me-2"></i>
                                 Continue with GitHub
-                            </button>
+                            </a>
                         </div>
 
                         <div class="divider">
