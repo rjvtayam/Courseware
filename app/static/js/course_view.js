@@ -121,6 +121,15 @@ class CourseView {
     }
 }
 
+// Initialize progress bars
+document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const progress = bar.getAttribute('data-progress');
+        bar.style.setProperty('--progress', progress);
+    });
+});
+
 // Initialize CourseView when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const courseIdMeta = document.querySelector('meta[name="course-id"]');

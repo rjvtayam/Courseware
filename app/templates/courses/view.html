@@ -23,14 +23,14 @@
                                     <span class="progress-badge">Course Progress</span>
                                 </div>
                                 <div class="text-right">
-                                    <span class="progress-percentage progress-text">
+                                    <span class="progress-percentage">
                                         {{ "%.1f"|format(current_user.get_course_progress(course.id)) }}%
                                     </span>
                                 </div>
                             </div>
                             <div class="progress-bar-container">
                                 <div class="progress-bar"
-                                     style="width:{{ current_user.get_course_progress(course.id) }}%">
+                                     data-progress="{{ current_user.get_course_progress(course.id) }}">
                                 </div>
                             </div>
                         </div>
@@ -70,16 +70,17 @@
                                                     {% endif %}
                                                 </div>
                                                 <div class="content-actions">
-                                                    <a href="{{ content.drive_view_link }}" target="_blank" 
-                                                       onclick="courseView.markContentViewed({{ content.id }})"
-                                                       class="btn-watch">Watch Video</a>
+                                                    <a href="{{ content.drive_view_link }}"
+                                                       target="_blank"
+                                                       onclick="courseView.markContentViewed('{{ content.id }}')"
+                                                       class="btn-success">Watch Video</a>
                                                     {% if current_user in course.students %}
-                                                        <button onclick="courseView.markContentCompleted({{ content.id }})"
-                                                                class="btn-complete">Mark Complete</button>
+                                                        <button onclick="courseView.markContentCompleted('{{ content.id }}')"
+                                                                class="btn-secondary">Mark Complete</button>
                                                     {% endif %}
                                                     {% if current_user.id == course.instructor_id %}
-                                                        <button onclick="courseView.showEditModal({{ content.id }})"
-                                                                class="btn-edit">Edit</button>
+                                                        <button onclick="courseView.showEditModal('{{ content.id }}')"
+                                                                class="btn-secondary">Edit</button>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -110,16 +111,17 @@
                                                     {% endif %}
                                                 </div>
                                                 <div class="content-actions">
-                                                    <a href="{{ content.drive_view_link }}" target="_blank"
-                                                       onclick="courseView.markContentViewed({{ content.id }})"
-                                                       class="btn-view-material">View Material</a>
+                                                    <a href="{{ content.drive_view_link }}"
+                                                       target="_blank"
+                                                       onclick="courseView.markContentViewed('{{ content.id }}')"
+                                                       class="btn-success">View Material</a>
                                                     {% if current_user in course.students %}
-                                                        <button onclick="courseView.markContentCompleted({{ content.id }})"
-                                                                class="btn-complete-material">Mark Complete</button>
+                                                        <button onclick="courseView.markContentCompleted('{{ content.id }}')"
+                                                                class="btn-secondary">Mark Complete</button>
                                                     {% endif %}
                                                     {% if current_user.id == course.instructor_id %}
-                                                        <button onclick="courseView.showEditModal({{ content.id }})"
-                                                                class="btn-edit">Edit</button>
+                                                        <button onclick="courseView.showEditModal('{{ content.id }}')"
+                                                                class="btn-secondary">Edit</button>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -129,7 +131,7 @@
                             </div>
                         </div>
                     {% else %}
-                        <p class="text-gray-600">No course content available yet.</p>
+                        <p class="no-content">No content available for this course yet.</p>
                     {% endif %}
 
                     <!-- Upload Content Section (Instructors Only) -->
@@ -170,7 +172,7 @@
 </div>
 
 <!-- Edit Content Modal -->
-<div id="editModal" class="modal hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<div id="editModal" class="modal" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         <div class="modal-backdrop" aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
