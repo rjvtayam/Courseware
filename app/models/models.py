@@ -7,10 +7,22 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    
+    # OAuth fields
     google_id = db.Column(db.String(120), unique=True, nullable=True)
     github_id = db.Column(db.String(120), unique=True, nullable=True)
-    password_hash = db.Column(db.String(128))
+    avatar_url = db.Column(db.String(255), nullable=True)  # Profile picture URL
+    oauth_provider = db.Column(db.String(20), nullable=True)  # 'google' or 'github'
+    
+    # Profile fields
+    first_name = db.Column(db.String(64), nullable=True)
+    last_name = db.Column(db.String(64), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
+    
+    # Role and status
     is_teacher = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -22,6 +34,12 @@ class User(UserMixin, db.Model):
                                    foreign_keys='Feedback.teacher_id')
     grades = db.relationship('Grade', backref='student', lazy='dynamic')
     user_comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
+    @property
+    def full_name(self):
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.username
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
