@@ -1,39 +1,86 @@
 {% extends "base.html" %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/course_view.css') }}">
+{% endblock %}
+
 {% block content %}
+<meta name="course-id" content="{{ course.id }}">
 <div class="py-6">
     <div class="max-w-3xl mx-auto">
         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div class="px-4 py-5 sm:px-6">
-                <h1 class="text-2xl font-bold text-gray-900">{{ course.title }}</h1>
-                <p class="mt-1 text-sm text-gray-500">
+            <!-- Course Header -->
+            <div class="course-header">
+                <h1 class="course-title">{{ course.title }}</h1>
+                <p class="course-instructor">
                     Taught by {{ course.instructor.username }}
                 </p>
+                {% if current_user in course.students %}
+                    <div class="progress-container">
+                        <div class="progress-wrapper">
+                            <div class="progress-label">
+                                <div>
+                                    <span class="progress-badge">Course Progress</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="progress-percentage progress-text">
+                                        {{ "%.1f"|format(current_user.get_course_progress(course.id)) }}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar"
+                                     style="width:{{ current_user.get_course_progress(course.id) }}%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
+
             <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
                 <div class="text-gray-700">
                     {{ course.description }}
                 </div>
                 
                 <!-- Course Content Section -->
-                <div class="mt-8">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Course Content</h2>
+                <div class="course-content">
+                    <h2 class="content-section-title">Course Content</h2>
                     {% if course.contents %}
                         <div class="space-y-6">
                             <!-- Videos Section -->
                             <div>
-                                <h3 class="text-md font-medium text-gray-900 mb-3">Videos</h3>
-                                <div class="grid gap-4">
+                                <h3 class="content-type-title">Videos</h3>
+                                <div class="content-grid" id="videos-content">
                                     {% for content in course.contents %}
                                         {% if content.content_type == 'video' %}
-                                            <div class="bg-gray-50 p-4 rounded-lg">
-                                                <h4 class="font-medium text-gray-900">{{ content.title }}</h4>
-                                                <p class="text-gray-600 text-sm mt-1">{{ content.description }}</p>
-                                                <div class="mt-3">
-                                                    <a href="{{ content.drive_view_link }}" target="_blank"
-                                                       class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                                        Watch Video
-                                                    </a>
+                                            <div class="content-card" data-content-id="{{ content.id }}">
+                                                <div class="content-header">
+                                                    <div>
+                                                        <h4 class="content-title">{{ content.title }}</h4>
+                                                        <p class="content-description">{{ content.description }}</p>
+                                                    </div>
+                                                    {% if current_user in course.students %}
+                                                        {% set progress = current_user.get_content_progress(content.id) %}
+                                                        <div class="ml-4">
+                                                            {% if progress and progress.completed %}
+                                                                <span class="completion-badge">Completed</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="content-actions">
+                                                    <a href="{{ content.drive_view_link }}" target="_blank" 
+                                                       onclick="courseView.markContentViewed({{ content.id }})"
+                                                       class="btn-watch">Watch Video</a>
+                                                    {% if current_user in course.students %}
+                                                        <button onclick="courseView.markContentCompleted({{ content.id }})"
+                                                                class="btn-complete">Mark Complete</button>
+                                                    {% endif %}
+                                                    {% if current_user.id == course.instructor_id %}
+                                                        <button onclick="courseView.showEditModal({{ content.id }})"
+                                                                class="btn-edit">Edit</button>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endif %}
@@ -43,18 +90,37 @@
 
                             <!-- Materials Section -->
                             <div>
-                                <h3 class="text-md font-medium text-gray-900 mb-3">Course Materials</h3>
-                                <div class="grid gap-4">
+                                <h3 class="content-type-title">Course Materials</h3>
+                                <div class="content-grid" id="materials-content">
                                     {% for content in course.contents %}
                                         {% if content.content_type == 'document' or content.content_type == 'tutorial' %}
-                                            <div class="bg-gray-50 p-4 rounded-lg">
-                                                <h4 class="font-medium text-gray-900">{{ content.title }}</h4>
-                                                <p class="text-gray-600 text-sm mt-1">{{ content.description }}</p>
-                                                <div class="mt-3">
+                                            <div class="content-card" data-content-id="{{ content.id }}">
+                                                <div class="content-header">
+                                                    <div>
+                                                        <h4 class="content-title">{{ content.title }}</h4>
+                                                        <p class="content-description">{{ content.description }}</p>
+                                                    </div>
+                                                    {% if current_user in course.students %}
+                                                        {% set progress = current_user.get_content_progress(content.id) %}
+                                                        <div class="ml-4">
+                                                            {% if progress and progress.completed %}
+                                                                <span class="completion-badge">Completed</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="content-actions">
                                                     <a href="{{ content.drive_view_link }}" target="_blank"
-                                                       class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                        View Material
-                                                    </a>
+                                                       onclick="courseView.markContentViewed({{ content.id }})"
+                                                       class="btn-view-material">View Material</a>
+                                                    {% if current_user in course.students %}
+                                                        <button onclick="courseView.markContentCompleted({{ content.id }})"
+                                                                class="btn-complete-material">Mark Complete</button>
+                                                    {% endif %}
+                                                    {% if current_user.id == course.instructor_id %}
+                                                        <button onclick="courseView.showEditModal({{ content.id }})"
+                                                                class="btn-edit">Edit</button>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endif %}
@@ -68,62 +134,72 @@
 
                     <!-- Upload Content Section (Instructors Only) -->
                     {% if current_user.id == course.instructor_id %}
-                        <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                            <h3 class="text-md font-medium text-gray-900 mb-3">Add Course Content</h3>
-                            <form action="{{ url_for('courses.upload_content', course_id=course.id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <div class="upload-section">
+                            <h3 class="content-type-title">Add Course Content</h3>
+                            <form action="{{ url_for('courses.upload_content', course_id=course.id) }}" method="POST" enctype="multipart/form-data" class="form-group">
                                 <div>
-                                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-                                    <input type="text" name="title" id="title" required
-                                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" name="title" id="title" required class="form-input">
                                 </div>
                                 <div>
-                                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                                    <textarea name="description" id="description" rows="3"
-                                              class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea name="description" id="description" rows="3" class="form-input"></textarea>
                                 </div>
                                 <div>
-                                    <label for="content_type" class="block text-sm font-medium text-gray-700">Content Type</label>
-                                    <select name="content_type" id="content_type" required
-                                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <label for="content_type" class="form-label">Content Type</label>
+                                    <select name="content_type" id="content_type" required class="form-select">
                                         <option value="video">Video</option>
                                         <option value="document">Document</option>
                                         <option value="tutorial">Tutorial</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="file" class="block text-sm font-medium text-gray-700">File</label>
-                                    <input type="file" name="file" id="file" required
-                                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <label for="file" class="form-label">File</label>
+                                    <input type="file" name="file" id="file" required class="form-input">
                                 </div>
                                 <div>
-                                    <button type="submit"
-                                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                        Upload Content
-                                    </button>
+                                    <button type="submit" class="btn-save">Upload Content</button>
                                 </div>
                             </form>
                         </div>
                     {% endif %}
                 </div>
-                
-                <!-- Assignments Section -->
-                <div class="mt-8">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Assignments</h2>
-                    <div class="space-y-4">
-                        {% if course.assignments %}
-                            {% for assignment in course.assignments %}
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h3 class="font-medium text-gray-900">{{ assignment.title }}</h3>
-                                    <p class="text-gray-600 mt-1">{{ assignment.description }}</p>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-gray-600">No assignments available yet.</p>
-                        {% endif %}
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Edit Content Modal -->
+<div id="editModal" class="modal hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="modal-backdrop" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="modal-container">
+            <form id="editForm" method="POST" enctype="multipart/form-data" class="modal-form">
+                <div>
+                    <label for="edit_title" class="form-label">Title</label>
+                    <input type="text" name="title" id="edit_title" required class="form-input">
+                </div>
+                <div class="mt-4">
+                    <label for="edit_description" class="form-label">Description</label>
+                    <textarea name="description" id="edit_description" rows="3" class="form-input"></textarea>
+                </div>
+                <div class="mt-4">
+                    <label for="edit_file" class="form-label">New File (Optional)</label>
+                    <input type="file" name="file" id="edit_file" class="form-input">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="courseView.hideEditModal()"
+                            class="btn-cancel">Cancel</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<script src="{{ url_for('static', filename='js/course_view.js') }}"></script>
 {% endblock %}

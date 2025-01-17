@@ -34,6 +34,7 @@ class User(UserMixin, db.Model):
                                    foreign_keys='Feedback.teacher_id')
     grades = db.relationship('Grade', backref='student', lazy='dynamic')
     user_comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    progress = db.relationship('CourseProgress', backref=db.backref('user', lazy=True), lazy=True)
 
     @property
     def full_name(self):
@@ -46,6 +47,62 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_content_progress(self, content_id):
+        """Get progress for specific content"""
+        progress = CourseProgress.query.filter_by(
+            user_id=self.id,
+            content_id=content_id
+        ).first()
+        return progress
+
+    def mark_content_viewed(self, content_id):
+        """Mark content as viewed and update progress"""
+        progress = self.get_content_progress(content_id)
+        if not progress:
+            progress = CourseProgress(
+                user_id=self.id,
+                content_id=content_id
+            )
+            db.session.add(progress)
+        
+        progress.last_viewed = datetime.utcnow()
+        progress.view_count += 1
+        db.session.commit()
+        return progress
+
+    def mark_content_completed(self, content_id):
+        """Mark content as completed"""
+        progress = self.get_content_progress(content_id)
+        if not progress:
+            progress = CourseProgress(
+                user_id=self.id,
+                content_id=content_id
+            )
+            db.session.add(progress)
+        
+        progress.completed = True
+        progress.last_viewed = datetime.utcnow()
+        db.session.commit()
+        return progress
+
+    def get_course_progress(self, course_id):
+        """Get overall progress for a course"""
+        course = Course.query.get(course_id)
+        if not course:
+            return 0
+        
+        total_content = len(course.contents)
+        if total_content == 0:
+            return 100  # No content means course is complete
+            
+        completed = CourseProgress.query.join(CourseContent).filter(
+            CourseProgress.user_id == self.id,
+            CourseContent.course_id == course_id,
+            CourseProgress.completed == True
+        ).count()
+        
+        return (completed / total_content) * 100
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -135,6 +192,20 @@ class CourseContent(db.Model):
     
     # Relationships
     course = db.relationship('Course', backref=db.backref('contents', lazy=True))
+    progress = db.relationship('CourseProgress', backref=db.backref('content', lazy=True), lazy=True)
+
+class CourseProgress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content_id = db.Column(db.Integer, db.ForeignKey('course_content.id'), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    last_viewed = db.Column(db.DateTime)
+    view_count = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('progress', lazy=True))
+    content = db.relationship('CourseContent', backref=db.backref('progress', lazy=True))
 
 @login_manager.user_loader
 def load_user(id):

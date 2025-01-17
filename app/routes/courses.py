@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, jsonify
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from app.models.models import Course, User, CourseContent
@@ -248,3 +248,111 @@ def delete_content(course_id, content_id):
         flash('Error deleting content. Please try again.', 'error')
     
     return redirect(url_for('courses.view', course_id=course_id))
+
+@bp.route('/course/<int:course_id>/content/<int:content_id>/edit', methods=['POST'])
+@login_required
+def edit_content(course_id, content_id):
+    course = Course.query.get_or_404(course_id)
+    content = CourseContent.query.get_or_404(content_id)
+    
+    # Check if user is the course instructor
+    if current_user.id != course.instructor_id:
+        flash('You do not have permission to edit content in this course.', 'error')
+        return redirect(url_for('courses.view', course_id=course_id))
+    
+    try:
+        content.title = request.form.get('title', content.title)
+        content.description = request.form.get('description', content.description)
+        
+        # Handle file update if provided
+        if 'file' in request.files and request.files['file'].filename:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(temp_path)
+            
+            # Initialize Drive service
+            token_info = {
+                'access_token': current_user.google_token,
+                'refresh_token': current_user.google_refresh_token,
+            }
+            drive_service.initialize_service(token_info)
+            
+            # Delete old file from Drive
+            if content.drive_file_id:
+                drive_service.delete_file(content.drive_file_id)
+            
+            # Upload new file
+            folder_id = course.video_folder_id if content.content_type == 'video' else course.material_folder_id
+            result = drive_service.upload_content(temp_path, folder_id, content.content_type)
+            
+            content.drive_file_id = result['file_id']
+            content.drive_view_link = result['view_link']
+            
+            # Clean up temporary file
+            os.remove(temp_path)
+        
+        db.session.commit()
+        flash('Content updated successfully!', 'success')
+        
+    except Exception as e:
+        current_app.logger.error(f"Error updating content: {str(e)}")
+        flash('Error updating content. Please try again.', 'error')
+    
+    return redirect(url_for('courses.view', course_id=course_id))
+
+@bp.route('/course/<int:course_id>/content/reorder', methods=['POST'])
+@login_required
+def reorder_content(course_id):
+    course = Course.query.get_or_404(course_id)
+    
+    # Check if user is the course instructor
+    if current_user.id != course.instructor_id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    try:
+        # Get the new order from request
+        new_order = request.json.get('order', [])
+        
+        # Update order for each content item
+        for index, content_id in enumerate(new_order):
+            content = CourseContent.query.get(content_id)
+            if content and content.course_id == course_id:
+                content.order = index + 1
+        
+        db.session.commit()
+        return jsonify({'message': 'Order updated successfully'})
+        
+    except Exception as e:
+        current_app.logger.error(f"Error reordering content: {str(e)}")
+        return jsonify({'error': 'Failed to update order'}), 500
+
+@bp.route('/course/<int:course_id>/content/<int:content_id>/progress', methods=['POST'])
+@login_required
+def update_progress(course_id, content_id):
+    course = Course.query.get_or_404(course_id)
+    content = CourseContent.query.get_or_404(content_id)
+    
+    # Check if user is enrolled in the course
+    if current_user not in course.students:
+        return jsonify({'error': 'Not enrolled in course'}), 403
+    
+    try:
+        action = request.form.get('action')
+        
+        if action == 'view':
+            current_user.mark_content_viewed(content_id)
+        elif action == 'complete':
+            current_user.mark_content_completed(content_id)
+        
+        # Get updated progress
+        progress = current_user.get_course_progress(course_id)
+        
+        return jsonify({
+            'message': 'Progress updated successfully',
+            'progress': progress
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error updating progress: {str(e)}")
+        return jsonify({'error': 'Failed to update progress'}), 500

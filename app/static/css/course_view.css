@@ -1,0 +1,147 @@
+.course-header {
+    @apply px-4 py-5 sm:px-6;
+}
+
+.course-title {
+    @apply text-2xl font-bold text-gray-900;
+}
+
+.course-instructor {
+    @apply mt-1 text-sm text-gray-500;
+}
+
+.progress-container {
+    @apply mt-2;
+}
+
+.progress-wrapper {
+    @apply relative pt-1;
+}
+
+.progress-label {
+    @apply flex mb-2 items-center justify-between;
+}
+
+.progress-badge {
+    @apply text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-600 bg-indigo-200;
+}
+
+.progress-percentage {
+    @apply text-xs font-semibold inline-block text-indigo-600;
+}
+
+.progress-bar-container {
+    @apply overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200;
+}
+
+.progress-bar {
+    @apply shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500;
+}
+
+.course-content {
+    @apply mt-8;
+}
+
+.content-section-title {
+    @apply text-lg font-semibold text-gray-900 mb-4;
+}
+
+.content-type-title {
+    @apply text-md font-medium text-gray-900 mb-3;
+}
+
+.content-grid {
+    @apply grid gap-4;
+}
+
+.content-card {
+    @apply bg-gray-50 p-4 rounded-lg;
+}
+
+.content-header {
+    @apply flex justify-between items-start;
+}
+
+.content-title {
+    @apply font-medium text-gray-900;
+}
+
+.content-description {
+    @apply text-gray-600 text-sm mt-1;
+}
+
+.completion-badge {
+    @apply ml-4 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+}
+
+.content-actions {
+    @apply mt-3 flex items-center space-x-2;
+}
+
+.btn-watch {
+    @apply inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+.btn-complete {
+    @apply inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+.btn-edit {
+    @apply inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+.btn-view-material {
+    @apply inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+}
+
+.btn-complete-material {
+    @apply inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+}
+
+.upload-section {
+    @apply mt-8 p-4 bg-gray-50 rounded-lg;
+}
+
+.form-group {
+    @apply space-y-4;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-700;
+}
+
+.form-input {
+    @apply mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md;
+}
+
+.form-select {
+    @apply mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+}
+
+.modal {
+    @apply fixed z-10 inset-0 overflow-y-auto;
+}
+
+.modal-backdrop {
+    @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity;
+}
+
+.modal-container {
+    @apply inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full;
+}
+
+.modal-form {
+    @apply p-6;
+}
+
+.modal-actions {
+    @apply mt-6 flex justify-end space-x-3;
+}
+
+.btn-cancel {
+    @apply inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
+
+.btn-save {
+    @apply inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+}
