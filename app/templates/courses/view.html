@@ -7,7 +7,7 @@
             <div class="px-4 py-5 sm:px-6">
                 <h1 class="text-2xl font-bold text-gray-900">{{ course.title }}</h1>
                 <p class="mt-1 text-sm text-gray-500">
-                    Taught by {{ course.teacher.username }}
+                    Taught by {{ course.instructor.username }}
                 </p>
             </div>
             <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
@@ -15,9 +15,100 @@
                     {{ course.description }}
                 </div>
                 
+                <!-- Course Content Section -->
                 <div class="mt-8">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Course Materials</h2>
-                    <!-- Course materials will be added here -->
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Course Content</h2>
+                    {% if course.contents %}
+                        <div class="space-y-6">
+                            <!-- Videos Section -->
+                            <div>
+                                <h3 class="text-md font-medium text-gray-900 mb-3">Videos</h3>
+                                <div class="grid gap-4">
+                                    {% for content in course.contents %}
+                                        {% if content.content_type == 'video' %}
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h4 class="font-medium text-gray-900">{{ content.title }}</h4>
+                                                <p class="text-gray-600 text-sm mt-1">{{ content.description }}</p>
+                                                <div class="mt-3">
+                                                    <a href="{{ content.drive_view_link }}" target="_blank"
+                                                       class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                        Watch Video
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Materials Section -->
+                            <div>
+                                <h3 class="text-md font-medium text-gray-900 mb-3">Course Materials</h3>
+                                <div class="grid gap-4">
+                                    {% for content in course.contents %}
+                                        {% if content.content_type == 'document' or content.content_type == 'tutorial' %}
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h4 class="font-medium text-gray-900">{{ content.title }}</h4>
+                                                <p class="text-gray-600 text-sm mt-1">{{ content.description }}</p>
+                                                <div class="mt-3">
+                                                    <a href="{{ content.drive_view_link }}" target="_blank"
+                                                       class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                        View Material
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-600">No course content available yet.</p>
+                    {% endif %}
+
+                    <!-- Upload Content Section (Instructors Only) -->
+                    {% if current_user.id == course.instructor_id %}
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="text-md font-medium text-gray-900 mb-3">Add Course Content</h3>
+                            <form action="{{ url_for('courses.upload_content', course_id=course.id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                                    <input type="text" name="title" id="title" required
+                                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                                    <textarea name="description" id="description" rows="3"
+                                              class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                                </div>
+                                <div>
+                                    <label for="content_type" class="block text-sm font-medium text-gray-700">Content Type</label>
+                                    <select name="content_type" id="content_type" required
+                                            class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="video">Video</option>
+                                        <option value="document">Document</option>
+                                        <option value="tutorial">Tutorial</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="file" class="block text-sm font-medium text-gray-700">File</label>
+                                    <input type="file" name="file" id="file" required
+                                           class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <button type="submit"
+                                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Upload Content
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Assignments Section -->
+                <div class="mt-8">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Assignments</h2>
                     <div class="space-y-4">
                         {% if course.assignments %}
                             {% for assignment in course.assignments %}
@@ -27,7 +118,7 @@
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <p class="text-gray-600">No materials available yet.</p>
+                            <p class="text-gray-600">No assignments available yet.</p>
                         {% endif %}
                     </div>
                 </div>
