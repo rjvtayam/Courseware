@@ -43,3 +43,11 @@ class Config:
     
     # Elasticsearch configuration
     ELASTICSEARCH_URL = environ.get('ELASTICSEARCH_URL')
+
+    # OAuth Configuration
+    GOOGLE_CLIENT_ID = environ.get('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = environ.get('GOOGLE_CLIENT_SECRET')
+    GOOGLE_DISCOVERY_URL = environ.get('GOOGLE_DISCOVERY_URL', 'https://accounts.google.com/.well-known/openid-configuration')
+    
+    GITHUB_CLIENT_ID = environ.get('GITHUB_CLIENT_ID')
+    GITHUB_CLIENT_SECRET = environ.get('GITHUB_CLIENT_SECRET')
