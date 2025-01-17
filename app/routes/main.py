@@ -11,3 +11,11 @@ def index():
 @login_required
 def profile():
     return render_template('profile.html', user=current_user)
+
+@bp.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@bp.route('/terms')
+def terms():
+    return render_template('terms.html')
