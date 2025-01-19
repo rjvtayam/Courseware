@@ -1,0 +1,37 @@
+{% extends "resources/base_resources.html" %}
+
+{% block resource_title %}Documentation Resources{% endblock %}
+
+{% block resource_description %}
+Access official documentation and comprehensive guides for your program's technologies
+{% endblock %}
+
+{% block resource_content %}
+{% for program, category in docs.items() %}
+<div class="mb-5">
+    <h2 class="mb-4">{{ category.name }}</h2>
+    <div class="row">
+        {% for resource in category.resources %}
+        <div class="col-md-6 col-lg-4">
+            <div class="resource-card card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ resource.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-3">{{ resource.description }}</p>
+                    <div class="mb-3">
+                        {% for tag in resource.tags %}
+                        <span class="resource-tag {{ program.lower() }}">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-visit w-100">
+                        <i class="fas fa-book me-2"></i>View Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

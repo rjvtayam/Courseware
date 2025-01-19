@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resources/resources.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/resources/resources.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="resource-header">
+    <div class="container">
+        <h1 class="resource-header-h1">{% block resource_title %}{% endblock %}</h1>
+        <p class="lead">{% block resource_description %}{% endblock %}</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-md-6 mx-auto">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control resource-search" placeholder="Search resources...">
+            </div>
+        </div>
+    </div>
+
+    {% block resource_content %}{% endblock %}
+</div>
+{% endblock %}
