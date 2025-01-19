@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Course Analytics{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics/analytics.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+    <div class="row">
+        <!-- Overall Course Stats -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Course Overview</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="course-stats">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Total Students</h5>
+                                <p id="total-students">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Active Students</h5>
+                                <p id="active-students">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Average Grade</h5>
+                                <p id="average-grade">-</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Completion Rate</h5>
+                                <p id="completion-rate">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Engagement -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Student Engagement</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="engagement-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Time Spent</th>
+                                    <th>Last Active</th>
+                                    <th>Engagement Level</th>
+                                    <th>Performance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Filled by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Details Modal -->
+        <div class="modal fade" id="studentDetailsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Student Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Time Spent</h6>
+                                <p id="modal-time-spent">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Material Views</h6>
+                                <p id="modal-views">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Assignments Completed</h6>
+                                <p id="modal-assignments">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Average Grade</h6>
+                                <p id="modal-grade">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/analytics/analytics.js') }}"></script>
+{% endblock %}
