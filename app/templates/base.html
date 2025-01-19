@@ -52,17 +52,14 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-tools"></i> Resources
+                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Resources
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">Learning Platforms</h6></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='platforms') }}">Online Platforms</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='documentation') }}">Documentation</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Tools & Software</h6></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='development-tools') }}">Development Tools</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.category', category='design-tools') }}">Design Software</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="resourcesDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('main.online_platforms') }}">Online Platforms</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.documentation') }}">Documentation</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.tools') }}">Tools & Software</a></li>
                         </ul>
                     </li>
                 </ul>
