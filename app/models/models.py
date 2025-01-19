@@ -191,7 +191,7 @@ class CourseContent(db.Model):
     
     # Relationships
     course = db.relationship('Course', backref=db.backref('content_items', lazy=True))
-    progress = db.relationship('CourseProgress', backref=db.backref('content', lazy=True), lazy=True)
+    progress = db.relationship('CourseProgress', backref='content_item', lazy=True)
 
 class CourseProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -201,10 +201,6 @@ class CourseProgress(db.Model):
     last_viewed = db.Column(db.DateTime)
     view_count = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    user = db.relationship('User', lazy='dynamic')
-    content = db.relationship('CourseContent', backref=db.backref('progress', lazy=True))
 
 @login_manager.user_loader
 def load_user(id):
