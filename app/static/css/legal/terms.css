@@ -1,0 +1,119 @@
+/* Terms of Service Page Styles */
+
+.terms-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 3rem;
+}
+
+.terms-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.terms-header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.last-updated {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.terms-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.terms-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.terms-section h2 {
+    color: #1a73e8;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.terms-section p {
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+}
+
+.terms-section ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.terms-section li {
+    position: relative;
+    padding-left: 1.8rem;
+    margin-bottom: 1rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.terms-section li:before {
+    content: "✓";
+    color: #1a73e8;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.contact-box {
+    background: #f8f9fa;
+    border-left: 4px solid #1a73e8;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.contact-box p {
+    margin: 0;
+    color: #4a5568;
+}
+
+.contact-box a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.contact-box a:hover {
+    color: #1557b0;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .terms-content {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .terms-header h1 {
+        font-size: 2rem;
+    }
+
+    .terms-section h2 {
+        font-size: 1.25rem;
+    }
+}

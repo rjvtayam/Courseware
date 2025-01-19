@@ -14,8 +14,8 @@ def profile():
 
 @bp.route('/privacy')
 def privacy():
-    return render_template('privacy.html')
+    return render_template('legal/privacy.html')
 
 @bp.route('/terms')
 def terms():
-    return render_template('terms.html')
+    return render_template('legal/terms.html')
