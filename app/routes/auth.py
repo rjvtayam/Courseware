@@ -23,6 +23,10 @@ def login():
 
 @bp.route('/login/google')
 def google_login():
+    # Get role from query parameters
+    role = request.args.get('role', 'student')
+    session['user_role'] = role  # Store role in session
+    
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -32,12 +36,16 @@ def google_login():
     request_uri = google_client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=url_for('auth.google_callback', _external=True),
-        scope=['openid', 'email', 'profile'],
+        scope=["openid", "email", "profile"],
     )
     return redirect(request_uri)
 
 @bp.route('/login/github')
 def github_login():
+    # Get role from query parameters
+    role = request.args.get('role', 'student')
+    session['user_role'] = role  # Store role in session
+    
     # GitHub's OAuth flow
     github_auth_url = f"https://github.com/login/oauth/authorize"
     request_uri = github_client.prepare_request_uri(
@@ -80,6 +88,9 @@ def google_callback():
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
         users_name = userinfo_response.json()["given_name"]
+        
+        # Get role from session
+        is_teacher = session.pop('user_role', 'student') == 'teacher'
     else:
         flash("User email not available or not verified by Google.", "error")
         return redirect(url_for("auth.login"))
@@ -91,6 +102,8 @@ def google_callback():
             username=users_name,
             email=users_email,
             google_id=unique_id,
+            oauth_provider='google',
+            is_teacher=is_teacher
         )
         db.session.add(user)
         db.session.commit()
@@ -135,6 +148,9 @@ def github_callback():
         flash("Could not get email from GitHub.", "error")
         return redirect(url_for("auth.login"))
     
+    # Get role from session
+    is_teacher = session.pop('user_role', 'student') == 'teacher'
+    
     # Create/update user in database
     user = User.query.filter_by(email=github_email).first()
     if not user:
@@ -142,6 +158,8 @@ def github_callback():
             username=github_user['login'],
             email=github_email,
             github_id=str(github_user['id']),
+            oauth_provider='github',
+            is_teacher=is_teacher
         )
         db.session.add(user)
         db.session.commit()

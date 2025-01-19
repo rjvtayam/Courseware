@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     
     # Status
     is_active = db.Column(db.Boolean, default=True)
+    is_teacher = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships

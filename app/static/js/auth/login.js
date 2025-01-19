@@ -10,4 +10,32 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
+
+    // Get role selection elements
+    const roleStudent = document.getElementById('roleStudent');
+    const roleTeacher = document.getElementById('roleTeacher');
+    const googleBtn = document.querySelector('.btn-google');
+    const githubBtn = document.querySelector('.btn-github');
+
+    // Function to update OAuth URLs with role parameter
+    function updateOAuthUrls() {
+        const role = document.querySelector('input[name="role"]:checked').value;
+        
+        // Update Google OAuth URL
+        const googleUrl = new URL(googleBtn.href);
+        googleUrl.searchParams.set('role', role);
+        googleBtn.href = googleUrl.toString();
+        
+        // Update GitHub OAuth URL
+        const githubUrl = new URL(githubBtn.href);
+        githubUrl.searchParams.set('role', role);
+        githubBtn.href = githubUrl.toString();
+    }
+
+    // Add event listeners for role changes
+    roleStudent.addEventListener('change', updateOAuthUrls);
+    roleTeacher.addEventListener('change', updateOAuthUrls);
+
+    // Initialize URLs with default role (student)
+    updateOAuthUrls();
 });
