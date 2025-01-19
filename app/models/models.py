@@ -34,7 +34,7 @@ class User(UserMixin, db.Model):
                                    foreign_keys='Feedback.teacher_id')
     grades = db.relationship('Grade', backref='student', lazy='dynamic')
     user_comments = db.relationship('Comment', backref='author', lazy='dynamic')
-    progress = db.relationship('CourseProgress', backref=db.backref('user', lazy=True), lazy=True)
+    progress = db.relationship('CourseProgress', lazy='dynamic')
 
     @property
     def full_name(self):
@@ -204,7 +204,7 @@ class CourseProgress(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    user = db.relationship('User', backref=db.backref('progress', lazy=True))
+    user = db.relationship('User', lazy='dynamic')
     content = db.relationship('CourseContent', backref=db.backref('progress', lazy=True))
 
 @login_manager.user_loader
