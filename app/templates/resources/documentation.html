@@ -7,13 +7,20 @@ Access official documentation and comprehensive guides for your program's techno
 {% endblock %}
 
 {% block resource_content %}
-{% for program, category in docs.items() %}
+{% for program, category in resources.get_documentation_resources().items() %}
 <div class="mb-5">
     <h2 class="mb-4">{{ category.name }}</h2>
     <div class="row">
         {% for resource in category.resources %}
         <div class="col-md-6 col-lg-4">
             <div class="resource-card card">
+                <!-- Image Placeholder -->
+                <div class="resource-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-book-open fa-3x"></i>
+                        <p>{{ resource.name }}</p>
+                    </div>
+                </div>
                 <div class="card-header">
                     <h5 class="card-title mb-0">{{ resource.name }}</h5>
                 </div>
@@ -24,9 +31,16 @@ Access official documentation and comprehensive guides for your program's techno
                         <span class="resource-tag {{ program.lower() }}">{{ tag }}</span>
                         {% endfor %}
                     </div>
-                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-visit w-100">
-                        <i class="fas fa-book me-2"></i>View Documentation
-                    </a>
+                    <div class="resource-actions">
+                        <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-visit">
+                            <i class="fas fa-book me-2"></i>View Documentation
+                        </a>
+                        <button class="btn btn-outline-primary btn-save" 
+                                data-resource="{{ resource.name }}" 
+                                data-type="documentation">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

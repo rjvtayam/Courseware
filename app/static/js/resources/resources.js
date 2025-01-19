@@ -135,4 +135,70 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Resource Management
+    function saveResource(name, type = 'resource') {
+        // Get storage key based on type
+        const storageKey = `saved${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+        
+        // Get saved items
+        let savedItems = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        
+        if (!savedItems.includes(name)) {
+            // Add to saved items
+            savedItems.push(name);
+            localStorage.setItem(storageKey, JSON.stringify(savedItems));
+            showToast(`${name} saved to bookmarks!`);
+            
+            // Update UI
+            const bookmarkBtn = document.querySelector(`[data-resource="${name}"]`);
+            if (bookmarkBtn) {
+                bookmarkBtn.classList.add('active');
+            }
+        } else {
+            // Remove from saved items
+            savedItems = savedItems.filter(item => item !== name);
+            localStorage.setItem(storageKey, JSON.stringify(savedItems));
+            showToast(`${name} removed from bookmarks!`);
+            
+            // Update UI
+            const bookmarkBtn = document.querySelector(`[data-resource="${name}"]`);
+            if (bookmarkBtn) {
+                bookmarkBtn.classList.remove('active');
+            }
+        }
+    }
+
+    // Toast Notifications
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Initialize Resource Cards
+    function initializeResourceCards() {
+        // Add click handlers for bookmark buttons
+        document.querySelectorAll('.btn-save').forEach(btn => {
+            const name = btn.dataset.resource;
+            const type = btn.dataset.type;
+            
+            // Check if already saved
+            const storageKey = `saved${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+            const savedItems = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            if (savedItems.includes(name)) {
+                btn.classList.add('active');
+            }
+            
+            // Add click handler
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                saveResource(name, type);
+            });
+        });
+    }
+
+    initializeResourceCards();
 });

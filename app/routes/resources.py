@@ -2,6 +2,190 @@ from flask import Blueprint, render_template, flash, redirect, url_for
 
 bp = Blueprint('resources', __name__)
 
+# Documentation Resources
+def get_documentation_resources():
+    return {
+        'bsit': {
+            'name': 'BSIT Documentation Resources',
+            'resources': [
+                {
+                    'name': 'MDN Web Docs',
+                    'url': 'https://developer.mozilla.org/',
+                    'description': 'Comprehensive documentation for web technologies.',
+                    'tags': ['Web Development', 'BSIT']
+                },
+                {
+                    'name': 'Cisco Documentation',
+                    'url': 'https://www.cisco.com/c/en/us/support/index.html',
+                    'description': 'Official Cisco networking documentation.',
+                    'tags': ['Networking', 'BSIT']
+                }
+            ]
+        },
+        'bscs': {
+            'name': 'BSCS Documentation Resources',
+            'resources': [
+                {
+                    'name': 'OpenGL Documentation',
+                    'url': 'https://www.opengl.org/documentation/',
+                    'description': 'Official OpenGL documentation and specifications.',
+                    'tags': ['Graphics', 'BSCS']
+                },
+                {
+                    'name': 'Unreal Engine Docs',
+                    'url': 'https://docs.unrealengine.com/',
+                    'description': 'Official Unreal Engine documentation for game development.',
+                    'tags': ['Game Development', 'BSCS']
+                }
+            ]
+        },
+        'bsis': {
+            'name': 'BSIS Documentation Resources',
+            'resources': [
+                {
+                    'name': 'OWASP Documentation',
+                    'url': 'https://owasp.org/www-project-web-security-testing-guide/',
+                    'description': 'Web security testing guide and best practices.',
+                    'tags': ['Security', 'BSIS']
+                },
+                {
+                    'name': 'Python Data Science Handbook',
+                    'url': 'https://jakevdp.github.io/PythonDataScienceHandbook/',
+                    'description': 'Comprehensive guide for data science with Python.',
+                    'tags': ['Data Analytics', 'BSIS']
+                }
+            ]
+        }
+    }
+
+# Development Tools
+def get_tools_resources():
+    return {
+        'bsit': {
+            'name': 'BSIT Development Tools',
+            'resources': [
+                {
+                    'name': 'Visual Studio Code',
+                    'url': 'https://code.visualstudio.com/',
+                    'description': 'Lightweight but powerful source code editor.',
+                    'tags': ['Editor', 'BSIT']
+                },
+                {
+                    'name': 'XAMPP',
+                    'url': 'https://www.apachefriends.org/',
+                    'description': 'Web development environment with Apache, MySQL, and PHP.',
+                    'tags': ['Web Development', 'BSIT']
+                }
+            ]
+        },
+        'bscs': {
+            'name': 'BSCS Development Tools',
+            'resources': [
+                {
+                    'name': 'Visual Studio',
+                    'url': 'https://visualstudio.microsoft.com/',
+                    'description': 'Full-featured IDE for C++, C#, and more.',
+                    'tags': ['IDE', 'BSCS']
+                },
+                {
+                    'name': 'Unity Hub',
+                    'url': 'https://unity.com/download',
+                    'description': 'Game development platform and editor.',
+                    'tags': ['Game Development', 'BSCS']
+                }
+            ]
+        },
+        'bsis': {
+            'name': 'BSIS Development Tools',
+            'resources': [
+                {
+                    'name': 'Jupyter Notebook',
+                    'url': 'https://jupyter.org/',
+                    'description': 'Interactive computing environment for data science.',
+                    'tags': ['Data Science', 'BSIS']
+                },
+                {
+                    'name': 'Wireshark',
+                    'url': 'https://www.wireshark.org/',
+                    'description': 'Network protocol analyzer for security analysis.',
+                    'tags': ['Security', 'BSIS']
+                }
+            ]
+        }
+    }
+
+# Online Platforms
+def get_online_platforms():
+    return {
+        'bsit': {
+            'name': 'BSIT Online Learning Platforms',
+            'resources': [
+                {
+                    'name': 'freeCodeCamp',
+                    'url': 'https://www.freecodecamp.org/',
+                    'description': 'Learn web development with free interactive tutorials.',
+                    'tags': ['Web Development', 'BSIT']
+                },
+                {
+                    'name': 'Cisco Networking Academy',
+                    'url': 'https://www.netacad.com/',
+                    'description': 'Learn networking concepts and get certified.',
+                    'tags': ['Networking', 'BSIT']
+                }
+            ]
+        },
+        'bscs': {
+            'name': 'BSCS Online Learning Platforms',
+            'resources': [
+                {
+                    'name': 'Coursera',
+                    'url': 'https://www.coursera.org/',
+                    'description': 'Online courses from top universities.',
+                    'tags': ['Programming', 'BSCS']
+                },
+                {
+                    'name': 'Unity Learn',
+                    'url': 'https://learn.unity.com/',
+                    'description': 'Official Unity tutorials and courses.',
+                    'tags': ['Game Development', 'BSCS']
+                }
+            ]
+        },
+        'bsis': {
+            'name': 'BSIS Online Learning Platforms',
+            'resources': [
+                {
+                    'name': 'DataCamp',
+                    'url': 'https://www.datacamp.com/',
+                    'description': 'Interactive data science courses.',
+                    'tags': ['Data Science', 'BSIS']
+                },
+                {
+                    'name': 'TryHackMe',
+                    'url': 'https://tryhackme.com/',
+                    'description': 'Learn cybersecurity through hands-on exercises.',
+                    'tags': ['Security', 'BSIS']
+                }
+            ]
+        }
+    }
+
+# Routes
+@bp.route('/resources/documentation')
+def documentation():
+    docs = get_documentation_resources()
+    return render_template('resources/documentation.html', docs=docs)
+
+@bp.route('/resources/tools')
+def tools():
+    tools = get_tools_resources()
+    return render_template('resources/tools.html', tools=tools)
+
+@bp.route('/resources/online-platforms')
+def online_platforms():
+    platforms = get_online_platforms()
+    return render_template('resources/online_platforms.html', platforms=platforms)
+
 RESOURCE_CATEGORIES = {
     'platforms': {
         'name': 'Online Learning Platforms',

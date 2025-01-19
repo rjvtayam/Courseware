@@ -14,6 +14,13 @@ Essential software tools and development environments for your program
         {% for resource in category.resources %}
         <div class="col-md-6 col-lg-4">
             <div class="resource-card card">
+                <!-- Image Placeholder -->
+                <div class="resource-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-tools fa-3x"></i>
+                        <p>{{ resource.name }}</p>
+                    </div>
+                </div>
                 <div class="card-header">
                     <h5 class="card-title mb-0">{{ resource.name }}</h5>
                 </div>
@@ -24,9 +31,16 @@ Essential software tools and development environments for your program
                         <span class="resource-tag {{ program.lower() }}">{{ tag }}</span>
                         {% endfor %}
                     </div>
-                    <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-visit w-100">
-                        <i class="fas fa-download me-2"></i>Get Tool
-                    </a>
+                    <div class="resource-actions">
+                        <a href="{{ resource.url }}" target="_blank" class="btn btn-primary btn-visit">
+                            <i class="fas fa-download me-2"></i>Get Tool
+                        </a>
+                        <button class="btn btn-outline-primary btn-save" 
+                                data-resource="{{ resource.name }}" 
+                                data-type="tool">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
