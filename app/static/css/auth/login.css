@@ -2,6 +2,7 @@
     min-height: calc(100vh - 200px);
     display: flex;
     align-items: center;
+    padding: 2rem 0;
 }
 
 .login-card {
@@ -11,6 +12,8 @@
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
     transition: transform 0.3s ease;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .login-card:hover {
@@ -20,12 +23,12 @@
 .login-header {
     background: linear-gradient(45deg, #1a73e8, #0d47a1);
     border-radius: 15px 15px 0 0;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .login-header img {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     margin-bottom: 1rem;
     animation: float 3s ease-in-out infinite;
 }
@@ -38,9 +41,9 @@
 
 .oauth-btn {
     transition: all 0.3s ease;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 1.1rem;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
     position: relative;
     overflow: hidden;
 }
@@ -62,8 +65,8 @@
 }
 
 .oauth-btn img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     margin-right: 10px;
     vertical-align: middle;
 }
@@ -73,7 +76,7 @@
     align-items: center;
     text-align: center;
     color: #666;
-    margin: 1.5rem 0;
+    margin: 1.25rem 0;
 }
 
 .divider::before,
@@ -90,6 +93,7 @@
 .terms-text {
     font-size: 0.85rem;
     color: #666;
+    margin-bottom: 0;
 }
 
 .terms-text a {
@@ -100,4 +104,28 @@
 
 .terms-text a:hover {
     text-decoration: underline;
+}
+
+/* Checkbox styling */
+.form-check {
+    padding-left: 1.8rem;
+}
+
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: -1.8rem;
+    border: 2px solid #1a73e8;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #1a73e8;
+    border-color: #1a73e8;
+}
+
+.form-check-label {
+    cursor: pointer;
+    padding-top: 0.1rem;
 }
