@@ -1,111 +1,11 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<style>
-.login-container {
-    min-height: calc(100vh - 200px);
-    display: flex;
-    align-items: center;
-}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth/login.css') }}">
+{% endblock %}
 
-.login-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-    transition: transform 0.3s ease;
-}
-
-.login-card:hover {
-    transform: translateY(-5px);
-}
-
-.login-header {
-    background: linear-gradient(45deg, #1a73e8, #0d47a1);
-    border-radius: 15px 15px 0 0;
-    padding: 2rem;
-}
-
-.login-header img {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1rem;
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-.oauth-btn {
-    transition: all 0.3s ease;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 1.1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.oauth-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.oauth-btn.google-btn {
-    background: white;
-    color: #444;
-    border: 1px solid #ddd;
-}
-
-.oauth-btn.github-btn {
-    background: #24292e;
-    color: white;
-}
-
-.oauth-btn img {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #666;
-    margin: 1.5rem 0;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #ddd;
-}
-
-.divider span {
-    padding: 0 10px;
-}
-
-.terms-text {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.terms-text a {
-    color: #1a73e8;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.terms-text a:hover {
-    text-decoration: underline;
-}
-</style>
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/auth/login.js') }}"></script>
 {% endblock %}
 
 {% block content %}
