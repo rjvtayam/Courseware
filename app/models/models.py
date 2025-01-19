@@ -111,13 +111,12 @@ class Course(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(50))
-    # Google Drive fields for course materials
     video_folder_id = db.Column(db.String(100))  # Folder ID for course videos
     material_folder_id = db.Column(db.String(100))  # Folder ID for course materials
     
     # Relationships
     assignments = db.relationship('Assignment', backref='course', lazy='dynamic')
-    contents = db.relationship('CourseContent', backref='course', lazy=True)
+    contents = db.relationship('CourseContent', lazy='dynamic')
 
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -191,7 +190,7 @@ class CourseContent(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    course = db.relationship('Course', backref=db.backref('contents', lazy=True))
+    course = db.relationship('Course', backref=db.backref('content_items', lazy=True))
     progress = db.relationship('CourseProgress', backref=db.backref('content', lazy=True), lazy=True)
 
 class CourseProgress(db.Model):
