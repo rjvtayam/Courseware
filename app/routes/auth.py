@@ -18,7 +18,7 @@ def get_google_provider_cfg():
 @bp.route('/login')
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('workspace.dashboard'))  # Redirect to workspace dashboard
     return render_template('auth/login.html')
 
 @bp.route('/login/google')
@@ -94,41 +94,47 @@ def google_callback():
         )
         db.session.add(user)
         db.session.commit()
+        flash("Welcome! Your account has been created successfully.", "success")
 
     # Begin user session by logging the user in
     login_user(user)
-    return redirect(url_for("main.index"))
+    return redirect(url_for('workspace.dashboard'))  # Redirect to workspace dashboard
 
 @bp.route('/login/github/callback')
 def github_callback():
-    # Get authorization code GitHub sent back
+    # Get the authorization code
     code = request.args.get("code")
     
-    # Prepare request to get tokens
-    github_token_url = "https://github.com/login/oauth/access_token"
-    token_url, headers, body = github_client.prepare_token_request(
-        github_token_url,
-        authorization_response=request.url,
-        redirect_url=url_for('auth.github_callback', _external=True),
-        code=code,
+    # Prepare request to get access token
+    token_url = "https://github.com/login/oauth/access_token"
+    token_params = {
+        'client_id': current_app.config['GITHUB_CLIENT_ID'],
+        'client_secret': current_app.config['GITHUB_CLIENT_SECRET'],
+        'code': code,
+    }
+    
+    # Get access token
+    token_response = requests.post(token_url, data=token_params, headers={'Accept': 'application/json'})
+    access_token = token_response.json().get('access_token')
+    
+    # Get user info from GitHub
+    github_user_url = "https://api.github.com/user"
+    github_email_url = "https://api.github.com/user/emails"
+    headers = {'Authorization': f'token {access_token}'}
+    
+    github_user = requests.get(github_user_url, headers=headers).json()
+    github_emails = requests.get(github_email_url, headers=headers).json()
+    
+    # Get primary email
+    github_email = next(
+        (email['email'] for email in github_emails if email['primary']),
+        github_emails[0]['email'] if github_emails else None
     )
     
-    token_response = requests.post(
-        token_url,
-        headers={'Accept': 'application/json'},
-        data={
-            'client_id': current_app.config['GITHUB_CLIENT_ID'],
-            'client_secret': current_app.config['GITHUB_CLIENT_SECRET'],
-            'code': code
-        },
-    )
-
-    # Get user info from GitHub
-    access_token = token_response.json()['access_token']
-    headers = {'Authorization': f'token {access_token}'}
-    github_user = requests.get('https://api.github.com/user', headers=headers).json()
-    github_email = requests.get('https://api.github.com/user/emails', headers=headers).json()[0]['email']
-
+    if not github_email:
+        flash("Could not get email from GitHub.", "error")
+        return redirect(url_for("auth.login"))
+    
     # Create/update user in database
     user = User.query.filter_by(email=github_email).first()
     if not user:
@@ -139,12 +145,14 @@ def github_callback():
         )
         db.session.add(user)
         db.session.commit()
+        flash("Welcome! Your account has been created successfully.", "success")
 
     login_user(user)
-    return redirect(url_for("main.index"))
+    return redirect(url_for('workspace.dashboard'))  # Redirect to workspace dashboard
 
 @bp.route('/logout')
 @login_required
 def logout():
     logout_user()
+    flash("You have been logged out successfully.", "success")
     return redirect(url_for('main.index'))
