@@ -14,15 +14,8 @@ class User(UserMixin, db.Model):
     avatar_url = db.Column(db.String(255), nullable=True)  # Profile picture URL
     oauth_provider = db.Column(db.String(20), nullable=True)  # 'google' or 'github'
     
-    # Profile fields
-    first_name = db.Column(db.String(64), nullable=True)
-    last_name = db.Column(db.String(64), nullable=True)
-    bio = db.Column(db.Text, nullable=True)
-    
-    # Role and status
-    is_teacher = db.Column(db.Boolean, default=False)
+    # Status
     is_active = db.Column(db.Boolean, default=True)
-    last_login = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -38,15 +31,7 @@ class User(UserMixin, db.Model):
 
     @property
     def full_name(self):
-        if self.first_name and self.last_name:
-            return f"{self.first_name} {self.last_name}"
         return self.username
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
     def get_content_progress(self, content_id):
         """Get progress for specific content"""
