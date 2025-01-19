@@ -175,7 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
         toast.className = 'toast-message';
         toast.textContent = message;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
     // Initialize Resource Cards
@@ -198,7 +201,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveResource(name, type);
             });
         });
+
+        // Add hover effect for resource cards
+        document.querySelectorAll('.resource-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = '0 15px 30px rgba(0,0,0,0.12)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = 'none';
+            });
+        });
     }
 
+    // Initialize when DOM is loaded
     initializeResourceCards();
 });

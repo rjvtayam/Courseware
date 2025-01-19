@@ -7,7 +7,7 @@ Access official documentation and comprehensive guides for your program's techno
 {% endblock %}
 
 {% block resource_content %}
-{% for program, category in resources.get_documentation_resources().items() %}
+{% for program, category in docs.items() %}
 <div class="mb-5">
     <h2 class="mb-4">{{ category.name }}</h2>
     <div class="row">

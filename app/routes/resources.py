@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for
 
-bp = Blueprint('resources', __name__)
+bp = Blueprint('resources', __name__, url_prefix='/resources')
 
 # Documentation Resources
 def get_documentation_resources():
@@ -171,20 +171,17 @@ def get_online_platforms():
     }
 
 # Routes
-@bp.route('/resources/documentation')
+@bp.route('/documentation')
 def documentation():
-    docs = get_documentation_resources()
-    return render_template('resources/documentation.html', docs=docs)
+    return render_template('resources/documentation.html', docs=get_documentation_resources())
 
-@bp.route('/resources/tools')
+@bp.route('/tools')
 def tools():
-    tools = get_tools_resources()
-    return render_template('resources/tools.html', tools=tools)
+    return render_template('resources/tools.html', tools=get_tools_resources())
 
-@bp.route('/resources/online-platforms')
+@bp.route('/online-platforms')
 def online_platforms():
-    platforms = get_online_platforms()
-    return render_template('resources/online_platforms.html', platforms=platforms)
+    return render_template('resources/online_platforms.html', platforms=get_online_platforms())
 
 RESOURCE_CATEGORIES = {
     'platforms': {
@@ -315,11 +312,11 @@ RESOURCE_CATEGORIES = {
     }
 }
 
-@bp.route('/resources')
+@bp.route('/')
 def index():
     return render_template('resources/index.html', categories=RESOURCE_CATEGORIES)
 
-@bp.route('/resources/<category>')
+@bp.route('/<category>')
 def category(category):
     if category not in RESOURCE_CATEGORIES:
         flash('Category not found', 'error')
