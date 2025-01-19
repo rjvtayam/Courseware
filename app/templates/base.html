@@ -76,10 +76,7 @@
                                 <span class="ms-2">{{ current_user.username }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('profile.index') }}">
-                                    <i class="fas fa-user me-2"></i> Profile
-                                </a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.index') }}">
+                                <li><a class="dropdown-item" href="{{ url_for('workspace.dashboard') }}">
                                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -89,8 +86,8 @@
                             </ul>
                         </div>
                     {% else %}
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
-                            <i class="fas fa-user-plus me-2"></i> Create Account
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
                         </a>
                     {% endif %}
                 </div>
