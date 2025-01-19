@@ -1,8 +1,15 @@
+/* Login Page Styles */
+
 .login-container {
     min-height: calc(100vh - 200px);
     display: flex;
     align-items: center;
     padding: 2rem 0;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
 }
 
 .login-card {
@@ -12,18 +19,21 @@
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
     transition: transform 0.3s ease;
+    width: 100%;
     max-width: 400px;
-    margin: 0 auto;
 }
 
 .login-card:hover {
     transform: translateY(-5px);
 }
 
+/* Header Section */
 .login-header {
     background: linear-gradient(45deg, #1a73e8, #0d47a1);
     border-radius: 15px 15px 0 0;
     padding: 1.5rem;
+    text-align: center;
+    color: white;
 }
 
 .login-header img {
@@ -33,19 +43,42 @@
     animation: float 3s ease-in-out infinite;
 }
 
+.login-header h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.login-header p {
+    margin: 0;
+    opacity: 0.75;
+}
+
 @keyframes float {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
 }
 
+/* Login Body */
+.login-body {
+    padding: 1.5rem;
+}
+
+/* OAuth Buttons */
+.oauth-buttons {
+    display: grid;
+    gap: 1rem;
+}
+
 .oauth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s ease;
     border-radius: 8px;
     padding: 10px;
     font-size: 1rem;
-    position: relative;
-    overflow: hidden;
+    text-decoration: none;
 }
 
 .oauth-btn:hover {
@@ -68,9 +101,13 @@
     width: 20px;
     height: 20px;
     margin-right: 10px;
-    vertical-align: middle;
 }
 
+.oauth-btn i {
+    margin-right: 10px;
+}
+
+/* Divider */
 .divider {
     display: flex;
     align-items: center;
@@ -90,42 +127,64 @@
     padding: 0 10px;
 }
 
-.terms-text {
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 0;
+/* Explore Section */
+.explore-section {
+    text-align: center;
 }
 
-.terms-text a {
+.explore-section p {
+    margin: 0;
+}
+
+.explore-link {
     color: #1a73e8;
     text-decoration: none;
+    display: inline-block;
+    padding: 0.5rem 1rem;
     font-weight: 500;
 }
 
-.terms-text a:hover {
+.explore-link:hover {
     text-decoration: underline;
 }
 
-/* Checkbox styling */
-.form-check {
-    padding-left: 1.8rem;
+/* Terms Section */
+.terms-section {
+    margin-top: 1.5rem;
 }
 
-.form-check-input {
+.terms-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.terms-checkbox input[type="checkbox"] {
     width: 1.2rem;
     height: 1.2rem;
-    margin-left: -1.8rem;
+    margin-top: 0.2rem;
     border: 2px solid #1a73e8;
     border-radius: 0.25rem;
     cursor: pointer;
 }
 
-.form-check-input:checked {
+.terms-checkbox input[type="checkbox"]:checked {
     background-color: #1a73e8;
     border-color: #1a73e8;
 }
 
-.form-check-label {
+.terms-checkbox label {
+    font-size: 0.85rem;
+    color: #666;
     cursor: pointer;
-    padding-top: 0.1rem;
+}
+
+.terms-checkbox a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-checkbox a:hover {
+    text-decoration: underline;
 }

@@ -11,47 +11,43 @@
 {% block content %}
 <div class="login-container">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-5 col-lg-4">
-                <div class="login-card">
-                    <div class="login-header text-center text-white">
-                        <img src="{{ url_for('static', filename='images/enlighten.png') }}" alt="Enlighten ED Logo" class="mb-3">
-                        <h4 class="mb-2">Welcome to Enlighten ED</h4>
-                        <p class="mb-0 opacity-75">Join our learning community</p>
+        <div class="login-wrapper">
+            <div class="login-card">
+                <div class="login-header">
+                    <img src="{{ url_for('static', filename='images/enlighten.png') }}" alt="Enlighten ED Logo">
+                    <h4>Welcome to Enlighten ED</h4>
+                    <p>Join our learning community</p>
+                </div>
+                
+                <div class="login-body">
+                    <div class="oauth-buttons">
+                        <a href="{{ url_for('auth.google_login') }}" class="oauth-btn google-btn">
+                            <img src="{{ url_for('static', filename='images/google.svg') }}" alt="Google">
+                            Continue with Google
+                        </a>
+                        
+                        <a href="{{ url_for('auth.github_login') }}" class="oauth-btn github-btn">
+                            <i class="fab fa-github"></i>
+                            Continue with GitHub
+                        </a>
                     </div>
-                    
-                    <div class="card-body p-4">
-                        <div class="d-grid gap-3">
-                            <a href="{{ url_for('auth.google_login') }}" 
-                               class="oauth-btn google-btn d-flex align-items-center justify-content-center text-decoration-none">
-                                <img src="{{ url_for('static', filename='images/google.svg') }}" alt="Google">
-                                Continue with Google
-                            </a>
-                            
-                            <a href="{{ url_for('auth.github_login') }}"
-                               class="oauth-btn github-btn d-flex align-items-center justify-content-center text-decoration-none">
-                                <i class="fab fa-github me-2"></i>
-                                Continue with GitHub
-                            </a>
-                        </div>
 
-                        <div class="divider">
-                            <span>or</span>
-                        </div>
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
 
-                        <div class="text-center">
-                            <p class="mb-0">Want to learn more?</p>
-                            <a href="{{ url_for('main.index') }}" class="btn btn-link text-primary">Explore Courses</a>
-                        </div>
+                    <div class="explore-section">
+                        <p>Want to learn more?</p>
+                        <a href="{{ url_for('main.index') }}" class="explore-link">Explore Courses</a>
+                    </div>
 
-                        <div class="terms-section mt-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-                                <label class="form-check-label terms-text" for="agreeTerms">
-                                    I agree to the <a href="{{ url_for('main.terms') }}">Terms of Service</a> and 
-                                    <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
-                                </label>
-                            </div>
+                    <div class="terms-section">
+                        <div class="terms-checkbox">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <label for="agreeTerms">
+                                I agree to the <a href="{{ url_for('main.terms') }}">Terms of Service</a> and 
+                                <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
+                            </label>
                         </div>
                     </div>
                 </div>
