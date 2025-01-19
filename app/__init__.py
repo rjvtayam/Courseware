@@ -54,10 +54,11 @@ def create_app():
         app.register_blueprint(assignments.bp)
         app.register_blueprint(resources.bp)
         
-        from app.routes import feedback, notifications, search, dashboard
+        from app.routes import feedback, notifications, search, dashboard, workspace
         app.register_blueprint(feedback.bp)
         app.register_blueprint(notifications.bp)
         app.register_blueprint(search.bp)
         app.register_blueprint(dashboard.bp)
+        app.register_blueprint(workspace.bp)
 
     return app
