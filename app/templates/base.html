@@ -52,14 +52,13 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             Resources
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="resourcesDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('main.online_platforms') }}">Online Platforms</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.documentation') }}">Documentation</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('main.tools') }}">Tools & Software</a></li>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('resources.documentation') }}">Documentation</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.tools') }}">Development Tools</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('resources.online_platforms') }}">Online Platforms</a></li>
                         </ul>
                     </li>
                 </ul>
