@@ -101,7 +101,7 @@ class Course(db.Model):
     
     # Relationships
     assignments = db.relationship('Assignment', backref='course', lazy='dynamic')
-    contents = db.relationship('CourseContent', lazy='dynamic')
+    contents = db.relationship('CourseContent', back_populates='course', lazy='dynamic')
 
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -175,7 +175,7 @@ class CourseContent(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    course = db.relationship('Course', backref=db.backref('content_items', lazy=True))
+    course = db.relationship('Course', back_populates='contents')
     progress = db.relationship('CourseProgress', backref='content_item', lazy=True)
 
 class CourseProgress(db.Model):
