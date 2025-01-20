@@ -14,8 +14,8 @@ def dashboard():
         courses = Course.query.filter_by(instructor_id=current_user.id).all()
         teaching = True
     else:
-        # Get courses where user is enrolled
-        courses = current_user.courses_enrolled
+        # Show all available courses to students
+        courses = Course.query.all()
         teaching = False
     
     return render_template('workspace/dashboard.html',
