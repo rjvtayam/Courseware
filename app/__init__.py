@@ -30,7 +30,31 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
         print("Converted database URL:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    db.init_app(app)
+    # Add SSL parameters if not present
+    if '?' not in app.config['SQLALCHEMY_DATABASE_URI']:
+        app.config['SQLALCHEMY_DATABASE_URI'] += '?'
+    if 'sslmode=' not in app.config['SQLALCHEMY_DATABASE_URI']:
+        app.config['SQLALCHEMY_DATABASE_URI'] += '&sslmode=verify-full'
+    if 'ssl=' not in app.config['SQLALCHEMY_DATABASE_URI']:
+        app.config['SQLALCHEMY_DATABASE_URI'] += '&ssl=true'
+
+    # Initialize database with retries
+    max_retries = 3
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            db.init_app(app)
+            with app.app_context():
+                db.engine.connect()
+            break
+        except Exception as e:
+            retry_count += 1
+            print(f"Database connection attempt {retry_count} failed: {str(e)}")
+            if retry_count == max_retries:
+                raise
+            import time
+            time.sleep(1)  # Wait 1 second before retrying
+
     login_manager.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     

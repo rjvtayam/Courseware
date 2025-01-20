@@ -11,8 +11,8 @@ class Config:
     DATABASE_URL = environ.get('DATABASE_URL')
     print("Raw DATABASE_URL from environment:", DATABASE_URL)  # Debug print
     
-    # Default PostgreSQL URL for production
-    DEFAULT_POSTGRES_URL = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=require'
+    # Default PostgreSQL URL for production with enhanced SSL settings
+    DEFAULT_POSTGRES_URL = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=verify-full&ssl=true'
     
     if DATABASE_URL:
         # Check if it's a MySQL URL
