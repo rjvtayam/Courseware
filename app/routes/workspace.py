@@ -227,7 +227,15 @@ def course_room(course_id):
         flash("You don't have access to this course.", "error")
         return redirect(url_for('workspace.dashboard'))
     
-    return render_template('workspace/room.html', course=course)
+    # Get course materials and assignments
+    materials = CourseContent.query.filter_by(course_id=course_id).order_by(CourseContent.order).all()
+    assignments = Assignment.query.filter_by(course_id=course_id).order_by(Assignment.due_date).all()
+    
+    return render_template('workspace/room.html', 
+                         course=course,
+                         materials=materials,
+                         assignments=assignments,
+                         is_teacher=current_user.id == course.teacher_id)
 
 # WebSocket event handlers for course rooms
 @socketio.on('join_course_room')

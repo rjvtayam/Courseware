@@ -1,11 +1,9 @@
 /* Workspace Dashboard Styles */
 .workspace-header {
-    padding: 3rem 0;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    padding: 2rem 0;
     margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
+    border-bottom: 1px solid #e9ecef;
 }
 
 .workspace-header::before {
@@ -20,22 +18,20 @@
 }
 
 .workspace-title {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
     font-size: 2.5rem;
     font-weight: 700;
-    color: #1a365d;
-    margin-bottom: 0.5rem;
     position: relative;
 }
 
 /* Course Cards */
 .course-card {
-    transition: all 0.3s ease;
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     height: 100%;
-    background: white;
-    position: relative;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -53,7 +49,7 @@
 
 .course-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .course-card:hover::before {
@@ -81,116 +77,118 @@
 
 /* Course Stats */
 .course-stats {
-    padding: 1rem 0;
-    border-top: 1px solid #e9ecef;
-    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    gap: 1rem;
     margin: 1rem 0;
-    display: flex;
-    justify-content: space-around;
-}
-
-.course-stats i {
-    color: #4a5568;
-    margin-right: 0.5rem;
-}
-
-.course-stats span {
-    color: #4a5568;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-}
-
-/* Action Buttons */
-.btn-action {
-    padding: 0.625rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
+    color: #6c757d;
     font-size: 0.875rem;
 }
 
-.btn-create {
-    background: linear-gradient(to right, #2563eb, #3b82f6);
-    border: none;
-    color: white;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+.course-stats i {
+    margin-right: 0.5rem;
 }
 
-.btn-create:hover {
-    background: linear-gradient(to right, #1d4ed8, #2563eb);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px -1px rgba(37, 99, 235, 0.3);
+/* Action Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.btn-view {
-    background-color: white;
-    border: 2px solid #e5e7eb;
-    color: #2563eb;
+.btn i {
+    margin-right: 0.5rem;
 }
 
-.btn-view:hover {
-    background-color: #2563eb;
-    border-color: #2563eb;
-    color: white;
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: #fff;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #138496;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #218838;
 }
 
 /* Category Badge */
 .category-badge {
-    background: linear-gradient(to right, #f3f4f6, #e5e7eb);
-    color: #4b5563;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
     display: inline-block;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    padding: 0.25rem 0.75rem;
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+/* Instructor Badge */
+.instructor-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #495057;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.instructor-badge i {
+    color: #6c757d;
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 16px;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
     margin: 2rem 0;
-    border: 2px dashed #e2e8f0;
 }
 
 .empty-state i {
-    font-size: 3.5rem;
-    color: #64748b;
-    margin-bottom: 1.5rem;
-    opacity: 0.8;
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
 }
 
 .empty-state h3 {
-    color: #1e293b;
-    font-weight: 600;
+    color: #2c3e50;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
 }
 
 .empty-state p {
-    color: #64748b;
-    font-size: 1.1rem;
+    color: #6c757d;
     margin-bottom: 2rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 /* Search Bar */
 .search-bar {
-    margin-bottom: 2.5rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     border: 1px solid #e5e7eb;
 }
 
@@ -208,21 +206,6 @@
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     outline: none;
-}
-
-/* Instructor Badge */
-.instructor-badge {
-    font-size: 0.9rem;
-    color: #4b5563;
-    display: flex;
-    align-items: center;
-    margin-top: 0.75rem;
-    padding: 0.5rem 0;
-}
-
-.instructor-badge i {
-    margin-right: 0.5rem;
-    color: #6b7280;
 }
 
 /* Responsive Adjustments */
@@ -255,4 +238,9 @@
     .search-bar .row > div:not(:last-child) {
         margin-bottom: 1rem;
     }
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
 }
