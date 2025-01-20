@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
 from flask_login import login_required, current_user
-from flask_socketio import emit
+from flask_socketio import emit, join_room, leave_room
 from app.models import Notification, Course, User
 from app import socketio, db
 from datetime import datetime
@@ -119,25 +119,35 @@ def send_course_notification(course_id, message, notification_type, exclude_user
 
 # WebSocket event handlers
 @socketio.on('connect')
-def handle_connect():
+def handle_connect(auth=None):
     """Add user to their personal notification room and course rooms"""
-    if current_user.is_authenticated:
-        socketio.join_room(f'user_{current_user.id}')
-        
-        # Join course rooms for real-time updates
-        for course in current_user.courses_enrolled:
-            socketio.join_room(f'course_{course.id}')
-        if current_user.is_teacher:
-            for course in current_user.courses_teaching:
-                socketio.join_room(f'course_{course.id}')
+    if not current_user.is_authenticated:
+        return False
+    
+    # Join user's personal notification room
+    join_room(f'user_{current_user.id}')
+    
+    # Join course rooms for real-time updates
+    for course in current_user.courses_enrolled:
+        join_room(f'course_{course.id}')
+    if current_user.is_teacher:
+        for course in current_user.courses_teaching:
+            join_room(f'course_{course.id}')
+    
+    return True
 
 @socketio.on('disconnect')
-def handle_disconnect():
+def handle_disconnect(sid=None):
     """Remove user from their rooms on disconnect"""
-    if current_user.is_authenticated:
-        socketio.leave_room(f'user_{current_user.id}')
-        for course in current_user.courses_enrolled:
-            socketio.leave_room(f'course_{course.id}')
-        if current_user.is_teacher:
-            for course in current_user.courses_teaching:
-                socketio.leave_room(f'course_{course.id}')
+    if not current_user.is_authenticated:
+        return
+    
+    # Leave user's personal notification room
+    leave_room(f'user_{current_user.id}')
+    
+    # Leave all course rooms
+    for course in current_user.courses_enrolled:
+        leave_room(f'course_{course.id}')
+    if current_user.is_teacher:
+        for course in current_user.courses_teaching:
+            leave_room(f'course_{course.id}')
