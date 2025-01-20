@@ -11,14 +11,18 @@ bp = Blueprint('workspace', __name__)
 @login_required
 def dashboard():
     """Main workspace dashboard showing courses and activities"""
+    print(f"Dashboard accessed by user: {current_user.email}, teacher status: {current_user.is_teacher}")  # Debug print
+    
     if current_user.is_teacher:
         # Get courses where user is the teacher
         courses = Course.query.filter_by(teacher_id=current_user.id).all()
         teaching = True
+        print(f"Teacher view: Found {len(courses)} courses")  # Debug print
     else:
         # Show all available courses to students
         courses = Course.query.all()
         teaching = False
+        print(f"Student view: Found {len(courses)} courses")  # Debug print
     
     return render_template('workspace/index.html',
                          courses=courses,

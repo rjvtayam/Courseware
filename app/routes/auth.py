@@ -26,6 +26,7 @@ def google_login():
     # Get role from query parameters
     role = request.args.get('role', 'student')
     session['user_role'] = role  # Store role in session
+    print(f"Selected role: {role}")  # Debug print
     
     # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
@@ -57,61 +58,78 @@ def github_login():
 
 @bp.route('/login/google/callback')
 def google_callback():
-    # Get authorization code Google sent back
-    code = request.args.get("code")
-    google_provider_cfg = get_google_provider_cfg()
-    token_endpoint = google_provider_cfg["token_endpoint"]
+    try:
+        # Get authorization code Google sent back
+        code = request.args.get("code")
+        google_provider_cfg = get_google_provider_cfg()
+        token_endpoint = google_provider_cfg["token_endpoint"]
 
-    # Prepare and send request to get tokens
-    token_url, headers, body = google_client.prepare_token_request(
-        token_endpoint,
-        authorization_response=request.url,
-        redirect_url=url_for('auth.google_callback', _external=True),
-        code=code,
-    )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(current_app.config['GOOGLE_CLIENT_ID'], current_app.config['GOOGLE_CLIENT_SECRET']),
-    )
-
-    # Parse the tokens
-    google_client.parse_request_body_response(json.dumps(token_response.json()))
-
-    # Get user info from Google
-    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
-    uri, headers, body = google_client.add_token(userinfo_endpoint)
-    userinfo_response = requests.get(uri, headers=headers, data=body)
-
-    if userinfo_response.json().get("email_verified"):
-        unique_id = userinfo_response.json()["sub"]
-        users_email = userinfo_response.json()["email"]
-        users_name = userinfo_response.json()["given_name"]
-        
-        # Get role from session
-        is_teacher = session.pop('user_role', 'student') == 'teacher'
-    else:
-        flash("User email not available or not verified by Google.", "error")
-        return redirect(url_for("auth.login"))
-
-    # Create a user in our db with the information provided by Google
-    user = User.query.filter_by(email=users_email).first()
-    if not user:
-        user = User(
-            username=users_name,
-            email=users_email,
-            google_id=unique_id,
-            oauth_provider='google',
-            is_teacher=is_teacher
+        # Prepare and send request to get tokens
+        token_url, headers, body = google_client.prepare_token_request(
+            token_endpoint,
+            authorization_response=request.url,
+            redirect_url=url_for('auth.google_callback', _external=True),
+            code=code,
         )
-        db.session.add(user)
-        db.session.commit()
-        flash("Welcome! Your account has been created successfully.", "success")
+        token_response = requests.post(
+            token_url,
+            headers=headers,
+            data=body,
+            auth=(current_app.config['GOOGLE_CLIENT_ID'], current_app.config['GOOGLE_CLIENT_SECRET']),
+        )
 
-    # Begin user session by logging the user in
-    login_user(user)
-    return redirect(url_for('workspace.dashboard'))  # Redirect to workspace dashboard
+        # Parse the tokens
+        google_client.parse_request_body_response(json.dumps(token_response.json()))
+
+        # Get user info from Google
+        userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+        uri, headers, body = google_client.add_token(userinfo_endpoint)
+        userinfo_response = requests.get(uri, headers=headers, data=body)
+
+        if userinfo_response.json().get("email_verified"):
+            unique_id = userinfo_response.json()["sub"]
+            users_email = userinfo_response.json()["email"]
+            users_name = userinfo_response.json()["given_name"]
+            
+            # Get role from session
+            is_teacher = session.pop('user_role', 'student') == 'teacher'
+            print(f"User role from session: {is_teacher}")  # Debug print
+        else:
+            flash("User email not available or not verified by Google.", "error")
+            return redirect(url_for("auth.login"))
+
+        # Create a user in our db with the information provided by Google
+        user = User.query.filter_by(email=users_email).first()
+        if not user:
+            print(f"Creating new user with email {users_email}, teacher: {is_teacher}")  # Debug print
+            user = User(
+                username=users_name,
+                email=users_email,
+                google_id=unique_id,
+                oauth_provider='google',
+                is_teacher=is_teacher
+            )
+            db.session.add(user)
+            db.session.commit()
+            flash("Welcome! Your account has been created successfully.", "success")
+        else:
+            print(f"Existing user found: {user.email}, current teacher status: {user.is_teacher}")  # Debug print
+            # Update existing user's teacher status if it changed
+            if user.is_teacher != is_teacher:
+                print(f"Updating teacher status from {user.is_teacher} to {is_teacher}")  # Debug print
+                user.is_teacher = is_teacher
+                db.session.commit()
+                flash("Your account role has been updated.", "success")
+
+        # Begin user session by logging the user in
+        login_user(user)
+        print(f"Logged in user: {user.email}, teacher status: {user.is_teacher}")  # Debug print
+        return redirect(url_for('workspace.dashboard'))
+        
+    except Exception as e:
+        print(f"Error in Google callback: {str(e)}")  # Debug print
+        flash("An error occurred during login. Please try again.", "error")
+        return redirect(url_for("auth.login"))
 
 @bp.route('/login/github/callback')
 def github_callback():
