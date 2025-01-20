@@ -30,20 +30,13 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
         print("Converted database URL:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    # Add SSL parameters if not present
-    if '?' not in app.config['SQLALCHEMY_DATABASE_URI']:
-        app.config['SQLALCHEMY_DATABASE_URI'] += '?'
-    if 'sslmode=' not in app.config['SQLALCHEMY_DATABASE_URI']:
-        app.config['SQLALCHEMY_DATABASE_URI'] += '&sslmode=verify-full'
-    if 'ssl=' not in app.config['SQLALCHEMY_DATABASE_URI']:
-        app.config['SQLALCHEMY_DATABASE_URI'] += '&ssl=true'
-
     # Initialize database with retries
     max_retries = 3
     retry_count = 0
     while retry_count < max_retries:
         try:
-            db.init_app(app)
+            if not db.get_engine(app, bind=None):
+                db.init_app(app)
             with app.app_context():
                 db.engine.connect()
             break
@@ -71,18 +64,12 @@ def create_app():
         db.create_all()
         
         # Import and register blueprints
-        from app.routes import main, auth, courses, assignments, resources
+        from app.routes import main, auth, courses, assignments, resources, workspace
         app.register_blueprint(main.bp)
         app.register_blueprint(auth.bp)
         app.register_blueprint(courses.bp)
         app.register_blueprint(assignments.bp)
         app.register_blueprint(resources.bp)
-        
-        from app.routes import feedback, notifications, search, dashboard, workspace
-        app.register_blueprint(feedback.bp)
-        app.register_blueprint(notifications.bp)
-        app.register_blueprint(search.bp)
-        app.register_blueprint(dashboard.bp)
         app.register_blueprint(workspace.bp)
 
     return app

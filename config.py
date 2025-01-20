@@ -11,8 +11,8 @@ class Config:
     DATABASE_URL = environ.get('DATABASE_URL')
     print("Raw DATABASE_URL from environment:", DATABASE_URL)  # Debug print
     
-    # Default PostgreSQL URL for production with enhanced SSL settings
-    DEFAULT_POSTGRES_URL = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=verify-full&ssl=true'
+    # Default PostgreSQL URL for production
+    DEFAULT_POSTGRES_URL = 'postgresql://courseware_owner:6UoVsM2NizTk@ep-noisy-darkness-a5ut3d68.us-east-2.aws.neon.tech/courseware?sslmode=require'
     
     if DATABASE_URL:
         # Check if it's a MySQL URL
@@ -29,6 +29,14 @@ class Config:
             else:
                 print("WARNING: Using default PostgreSQL URL")  # Debug print
                 DATABASE_URL = DEFAULT_POSTGRES_URL
+            
+            # Ensure SSL mode is set correctly
+            if 'sslmode=' not in DATABASE_URL:
+                if '?' in DATABASE_URL:
+                    DATABASE_URL += '&sslmode=require'
+                else:
+                    DATABASE_URL += '?sslmode=require'
+            
             SQLALCHEMY_DATABASE_URI = DATABASE_URL
     else:
         print("No DATABASE_URL found in environment, using default PostgreSQL URL")  # Debug print
@@ -51,10 +59,6 @@ class Config:
     
     GITHUB_CLIENT_ID = environ.get('GITHUB_CLIENT_ID')
     GITHUB_CLIENT_SECRET = environ.get('GITHUB_CLIENT_SECRET')
-    
-    # Google Drive Configuration
-    GOOGLE_DRIVE_CLIENT_ID = environ.get('GOOGLE_DRIVE_CLIENT_ID')
-    GOOGLE_DRIVE_CLIENT_SECRET = environ.get('GOOGLE_DRIVE_CLIENT_SECRET')
-    DRIVE_SCOPES = [
-        'https://www.googleapis.com/auth/drive.file'
-    ]
+    GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+    GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+    GITHUB_API_BASE_URL = 'https://api.github.com/'
