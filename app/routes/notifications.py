@@ -99,7 +99,7 @@ def send_course_notification(course_id, message, notification_type, exclude_user
     
     # Get all enrolled students and instructor
     users = [enrollment.student_id for enrollment in course.enrollments]
-    users.append(course.instructor_id)
+    users.append(course.teacher_id)
     
     # Remove excluded user if specified
     if exclude_user_id and exclude_user_id in users:
@@ -128,10 +128,15 @@ def handle_connect(auth=None):
     join_room(f'user_{current_user.id}')
     
     # Join course rooms for real-time updates
-    for course in current_user.courses_enrolled:
-        join_room(f'course_{course.id}')
     if current_user.is_teacher:
-        for course in current_user.courses_teaching:
+        # Teachers join rooms for courses they teach
+        courses = Course.query.filter_by(teacher_id=current_user.id).all()
+        for course in courses:
+            join_room(f'course_{course.id}')
+    else:
+        # Students see all courses
+        courses = Course.query.all()
+        for course in courses:
             join_room(f'course_{course.id}')
     
     return True
@@ -146,8 +151,10 @@ def handle_disconnect(sid=None):
     leave_room(f'user_{current_user.id}')
     
     # Leave all course rooms
-    for course in current_user.courses_enrolled:
-        leave_room(f'course_{course.id}')
     if current_user.is_teacher:
-        for course in current_user.courses_teaching:
-            leave_room(f'course_{course.id}')
+        courses = Course.query.filter_by(teacher_id=current_user.id).all()
+    else:
+        courses = Course.query.all()
+        
+    for course in courses:
+        leave_room(f'course_{course.id}')

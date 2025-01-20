@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    courses_teaching = db.relationship('Course', backref='instructor', lazy='dynamic')
+    courses_teaching = db.relationship('Course', backref='teacher', lazy='dynamic')
     courses_enrolled = db.relationship('Course', secondary='enrollment',
                                      backref=db.backref('students', lazy='dynamic'))
     notifications = db.relationship('Notification', backref='user', lazy='dynamic')
@@ -94,7 +94,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    instructor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(50))
     video_folder_id = db.Column(db.String(100))  # Folder ID for course videos

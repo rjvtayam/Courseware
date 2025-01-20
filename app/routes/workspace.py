@@ -10,8 +10,8 @@ bp = Blueprint('workspace', __name__)
 def dashboard():
     """Main workspace dashboard showing courses and activities"""
     if current_user.is_teacher:
-        # Get courses where user is the instructor
-        courses = Course.query.filter_by(instructor_id=current_user.id).all()
+        # Get courses where user is the teacher
+        courses = Course.query.filter_by(teacher_id=current_user.id).all()
         teaching = True
     else:
         # Show all available courses to students
@@ -41,7 +41,7 @@ def create_course():
         course = Course(
             title=title,
             description=description,
-            instructor_id=current_user.id
+            teacher_id=current_user.id
         )
         db.session.add(course)
         db.session.commit()
@@ -58,7 +58,7 @@ def course(course_id):
     course = Course.query.get_or_404(course_id)
     
     # Check if user has access to this course
-    if not (current_user.id == course.instructor_id or course in current_user.courses_enrolled):
+    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
         flash("You don't have access to this course.", "error")
         return redirect(url_for('workspace.dashboard'))
     
@@ -78,8 +78,8 @@ def add_content(course_id):
     """Add content to a course (teachers only)"""
     course = Course.query.get_or_404(course_id)
     
-    if current_user.id != course.instructor_id:
-        flash("Only the course instructor can add content.", "error")
+    if current_user.id != course.teacher_id:
+        flash("Only the course teacher can add content.", "error")
         return redirect(url_for('workspace.course', course_id=course_id))
     
     if request.method == 'POST':
@@ -114,8 +114,8 @@ def add_assignment(course_id):
     """Add assignment to a course (teachers only)"""
     course = Course.query.get_or_404(course_id)
     
-    if current_user.id != course.instructor_id:
-        flash("Only the course instructor can add assignments.", "error")
+    if current_user.id != course.teacher_id:
+        flash("Only the course teacher can add assignments.", "error")
         return redirect(url_for('workspace.course', course_id=course_id))
     
     if request.method == 'POST':
