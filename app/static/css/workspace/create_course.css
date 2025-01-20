@@ -1,0 +1,81 @@
+/* Course Creation Page Styles */
+.content-section {
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.content-section:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.content-type-label {
+    font-size: 1.1rem;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Content Type Icons */
+.btn-outline-primary i {
+    margin-right: 0.5rem;
+}
+
+/* Summernote Customization */
+.note-editor.note-frame {
+    border-color: #e2e8f0;
+    border-radius: 8px;
+}
+
+.note-editor.note-frame .note-editing-area {
+    background-color: #fff;
+}
+
+.note-toolbar {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+/* File Input Styling */
+.form-control[type="file"] {
+    padding: 0.375rem 0.75rem;
+    line-height: 1.5;
+}
+
+/* Form Validation Styles */
+.form-control:required:invalid {
+    border-color: #e2e8f0;
+}
+
+.form-control:required:valid {
+    border-color: #48bb78;
+}
+
+/* Content Section Animation */
+.content-section {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .btn-outline-primary {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .content-type-label {
+        font-size: 1rem;
+    }
+}

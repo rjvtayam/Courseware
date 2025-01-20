@@ -356,3 +356,105 @@ def update_progress(course_id, content_id):
     except Exception as e:
         current_app.logger.error(f"Error updating progress: {str(e)}")
         return jsonify({'error': 'Failed to update progress'}), 500
+
+@bp.route('/create', methods=['GET', 'POST'])
+@login_required
+def create_course():
+    if not current_user.is_teacher:
+        flash('Only teachers can create courses.', 'error')
+        return redirect(url_for('workspace.dashboard'))
+        
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        category = request.form.get('category')
+        
+        if not title or not description or not category:
+            flash('Please fill in all required fields.', 'error')
+            return redirect(url_for('courses.create_course'))
+            
+        try:
+            # Create course folders in Google Drive
+            course_folder = drive_service.create_folder(f"Course - {title}")
+            video_folder = drive_service.create_folder("Videos", parent_id=course_folder['id'])
+            material_folder = drive_service.create_folder("Materials", parent_id=course_folder['id'])
+            
+            # Create course in database
+            course = Course(
+                title=title,
+                description=description,
+                category=category,
+                teacher_id=current_user.id,
+                video_folder_id=video_folder['id'],
+                material_folder_id=material_folder['id']
+            )
+            db.session.add(course)
+            db.session.commit()
+            
+            # Process content sections
+            content_data = request.form.to_dict(flat=False)
+            files = request.files.to_dict(flat=False)
+            
+            for idx in range(len(content_data.get('content[title]', []))):
+                content_type = content_data.get(f'content[{idx}][type]', [''])[0]
+                content_title = content_data.get(f'content[{idx}][title]', [''])[0]
+                content_description = content_data.get(f'content[{idx}][description]', [''])[0]
+                
+                if not content_title:
+                    continue
+                    
+                content = CourseContent(
+                    title=content_title,
+                    description=content_description,
+                    course_id=course.id,
+                    content_type=content_type,
+                    order=idx
+                )
+                
+                if content_type == 'video':
+                    file = files.get(f'content[{idx}][file]')[0]
+                    if file and file.filename:
+                        secure_name = secure_filename(file.filename)
+                        file_metadata = drive_service.upload_file(
+                            file,
+                            secure_name,
+                            video_folder['id'],
+                            mime_type=file.content_type
+                        )
+                        content.drive_file_id = file_metadata['id']
+                        content.drive_view_link = file_metadata['webViewLink']
+                        
+                elif content_type == 'document':
+                    file = files.get(f'content[{idx}][file]')[0]
+                    if file and file.filename:
+                        secure_name = secure_filename(file.filename)
+                        file_metadata = drive_service.upload_file(
+                            file,
+                            secure_name,
+                            material_folder['id'],
+                            mime_type=file.content_type
+                        )
+                        content.drive_file_id = file_metadata['id']
+                        content.drive_view_link = file_metadata['webViewLink']
+                        
+                elif content_type == 'link':
+                    content.drive_view_link = content_data.get(f'content[{idx}][url]', [''])[0]
+                    
+                elif content_type == 'text':
+                    content_text = content_data.get(f'content[{idx}][content]', [''])[0]
+                    # Store text content directly in the database
+                    content.text_content = content_text
+                
+                db.session.add(content)
+            
+            db.session.commit()
+            flash('Course created successfully!', 'success')
+            return redirect(url_for('courses.view_course', course_id=course.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error creating course: {str(e)}")
+            flash('An error occurred while creating the course. Please try again.', 'error')
+            return redirect(url_for('courses.create_course'))
+            
+    return render_template('workspace/create_course.html')

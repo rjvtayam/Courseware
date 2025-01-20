@@ -170,15 +170,27 @@ class CourseContent(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    content_type = db.Column(db.String(50))  # 'video', 'document', 'tutorial'
-    drive_file_id = db.Column(db.String(100))  # Google Drive file ID
-    drive_view_link = db.Column(db.String(255))  # Shareable link
-    order = db.Column(db.Integer)  # For ordering content within course
+    content_type = db.Column(db.String(50))  # 'video', 'document', 'link', 'text'
+    drive_file_id = db.Column(db.String(100))  # For uploaded files (videos, documents)
+    drive_view_link = db.Column(db.String(255))  # For files and external links
+    text_content = db.Column(db.Text)  # For text tutorials
+    order = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relationships
     course = db.relationship('Course', back_populates='contents')
     progress = db.relationship('CourseProgress', backref='content_item', lazy=True)
+
+    def to_dict(self):
+        """Convert content to dictionary format"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'content_type': self.content_type,
+            'drive_view_link': self.drive_view_link,
+            'text_content': self.text_content,
+            'order': self.order,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 class CourseProgress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
