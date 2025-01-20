@@ -138,14 +138,30 @@ def github_callback():
     github_user = requests.get(github_user_url, headers=headers).json()
     github_emails = requests.get(github_email_url, headers=headers).json()
     
-    # Get primary email
-    github_email = next(
-        (email['email'] for email in github_emails if email['primary']),
-        github_emails[0]['email'] if github_emails else None
-    )
+    # Get primary email with better error handling
+    github_email = None
+    if github_emails:
+        # First try to find primary email
+        for email_obj in github_emails:
+            if email_obj.get('primary') and email_obj.get('email'):
+                github_email = email_obj['email']
+                break
+        # If no primary email found, take the first verified email
+        if not github_email:
+            for email_obj in github_emails:
+                if email_obj.get('verified') and email_obj.get('email'):
+                    github_email = email_obj['email']
+                    break
+        # If still no email, take the first available email
+        if not github_email and github_emails and isinstance(github_emails[0], dict):
+            github_email = github_emails[0].get('email')
+    
+    # Fallback to user's public email if available
+    if not github_email and github_user.get('email'):
+        github_email = github_user['email']
     
     if not github_email:
-        flash("Could not get email from GitHub.", "error")
+        flash("Could not get email from GitHub. Please make sure you have a verified email address.", "error")
         return redirect(url_for("auth.login"))
     
     # Get role from session
