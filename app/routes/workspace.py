@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app.models.models import Course, User, CourseContent, Assignment
-from app import db
+from app import db, socketio
+from flask_socketio import join_room, leave_room, emit
+from datetime import datetime
 
 bp = Blueprint('workspace', __name__)
 
@@ -140,3 +142,163 @@ def add_assignment(course_id):
         return redirect(url_for('workspace.course', course_id=course_id))
     
     return render_template('workspace/add_assignment.html', course=course)
+
+@bp.route('/course/<int:course_id>/materials')
+@login_required
+def course_materials(course_id):
+    """View and manage course materials"""
+    course = Course.query.get_or_404(course_id)
+    
+    # Check if user has access to this course
+    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+        flash("You don't have access to this course.", "error")
+        return redirect(url_for('workspace.dashboard'))
+    
+    materials = CourseContent.query.filter_by(
+        course_id=course_id,
+        content_type='material'
+    ).order_by(CourseContent.order).all()
+    
+    return render_template('workspace/materials.html',
+                         course=course,
+                         materials=materials)
+
+@bp.route('/course/<int:course_id>/materials/upload', methods=['POST'])
+@login_required
+def upload_material(course_id):
+    """Upload material to a course"""
+    course = Course.query.get_or_404(course_id)
+    
+    if current_user.id != course.teacher_id:
+        return jsonify({'error': 'Only the course teacher can upload materials'}), 403
+    
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+        
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    try:
+        # Save file to Google Drive
+        file_metadata = {
+            'name': file.filename,
+            'parents': [course.material_folder_id]
+        }
+        media = MediaFileUpload(file, resumable=True)
+        file = drive_service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+        ).execute()
+        
+        # Create material record
+        material = CourseContent(
+            title=file.filename,
+            description=request.form.get('description', ''),
+            course_id=course_id,
+            content_type='material',
+            drive_file_id=file['id'],
+            order=len(course.contents) + 1
+        )
+        db.session.add(material)
+        db.session.commit()
+        
+        # Notify course members
+        emit('material_uploaded', {
+            'course_id': course_id,
+            'material_id': material.id,
+            'title': material.title
+        }, room=f'course_{course_id}')
+        
+        return jsonify({'success': True, 'material_id': material.id})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@bp.route('/course/<int:course_id>/room')
+@login_required
+def course_room(course_id):
+    """View course room with chat and materials"""
+    course = Course.query.get_or_404(course_id)
+    
+    # Check if user has access to this course
+    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+        flash("You don't have access to this course.", "error")
+        return redirect(url_for('workspace.dashboard'))
+    
+    return render_template('workspace/room.html', course=course)
+
+# WebSocket event handlers for course rooms
+@socketio.on('join_course_room')
+def handle_join_room(data):
+    """Join a course room"""
+    course_id = data.get('course_id')
+    if not course_id:
+        return False
+    
+    course = Course.query.get(course_id)
+    if not course:
+        return False
+    
+    # Verify user has access to this course
+    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+        return False
+    
+    room = f'course_{course_id}'
+    join_room(room)
+    
+    # Notify others in the room
+    emit('user_joined', {
+        'user_id': current_user.id,
+        'username': current_user.username,
+        'timestamp': datetime.utcnow().isoformat()
+    }, room=room)
+    
+    return True
+
+@socketio.on('leave_course_room')
+def handle_leave_room(data):
+    """Leave a course room"""
+    course_id = data.get('course_id')
+    if not course_id:
+        return False
+    
+    room = f'course_{course_id}'
+    leave_room(room)
+    
+    # Notify others in the room
+    emit('user_left', {
+        'user_id': current_user.id,
+        'username': current_user.username,
+        'timestamp': datetime.utcnow().isoformat()
+    }, room=room)
+    
+    return True
+
+@socketio.on('course_message')
+def handle_course_message(data):
+    """Handle course room messages"""
+    course_id = data.get('course_id')
+    message = data.get('message')
+    
+    if not course_id or not message:
+        return False
+    
+    course = Course.query.get(course_id)
+    if not course:
+        return False
+    
+    # Verify user has access to this course
+    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+        return False
+    
+    # Broadcast message to room
+    emit('room_message', {
+        'user_id': current_user.id,
+        'username': current_user.username,
+        'message': message,
+        'timestamp': datetime.utcnow().isoformat()
+    }, room=f'course_{course_id}')
+    
+    return True

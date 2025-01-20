@@ -96,9 +96,9 @@ class Course(db.Model):
     description = db.Column(db.Text)
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    category = db.Column(db.String(50), nullable=True)  # Added category field
-    video_folder_id = db.Column(db.String(100))  # Folder ID for course videos
-    material_folder_id = db.Column(db.String(100))  # Folder ID for course materials
+    category = db.Column(db.String(50), nullable=True) 
+    video_folder_id = db.Column(db.String(100)) 
+    material_folder_id = db.Column(db.String(100)) 
     
     # Relationships
     assignments = db.relationship('Assignment', backref='course', lazy='dynamic')

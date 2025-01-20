@@ -30,7 +30,8 @@ def get_notifications():
             'type': n.type,
             'is_read': n.is_read,
             'created_at': n.created_at.isoformat(),
-            'related_id': n.related_id
+            'related_id': n.related_id,
+            'url': n.get_url() if hasattr(n, 'get_url') else None
         } for n in notifications.items],
         'total': notifications.total,
         'pages': notifications.pages,
@@ -70,7 +71,7 @@ def mark_read(notification_id):
     db.session.commit()
     return jsonify({'success': True})
 
-def send_notification(user_id, message, notification_type, related_id=None):
+def send_notification(user_id, message, notification_type, related_id=None, url=None):
     """Send real-time notification to specific user"""
     notification = Notification(
         user_id=user_id,
@@ -79,6 +80,10 @@ def send_notification(user_id, message, notification_type, related_id=None):
         related_id=related_id,
         created_at=datetime.utcnow()
     )
+    
+    if url:
+        notification.url = url
+        
     db.session.add(notification)
     db.session.commit()
     
@@ -88,12 +93,13 @@ def send_notification(user_id, message, notification_type, related_id=None):
         'message': message,
         'type': notification_type,
         'related_id': related_id,
+        'url': url,
         'created_at': notification.created_at.isoformat()
     }
     socketio.emit('notification', notification_data, room=f'user_{user_id}')
     return notification
 
-def send_course_notification(course_id, message, notification_type, exclude_user_id=None):
+def send_course_notification(course_id, message, notification_type, exclude_user_id=None, url=None):
     """Send notification to all users in a course"""
     course = Course.query.get_or_404(course_id)
     
@@ -111,7 +117,8 @@ def send_course_notification(course_id, message, notification_type, exclude_user
             user_id=user_id,
             message=message,
             notification_type=notification_type,
-            related_id=course_id
+            related_id=course_id,
+            url=url
         )
         notifications.append(notification)
     
@@ -133,11 +140,15 @@ def handle_connect(auth=None):
         courses = Course.query.filter_by(teacher_id=current_user.id).all()
         for course in courses:
             join_room(f'course_{course.id}')
+            # Also join the general room for this course
+            join_room(f'room_{course.id}')
     else:
-        # Students see all courses
-        courses = Course.query.all()
-        for course in courses:
+        # Students join rooms for courses they're enrolled in
+        enrollments = Course.query.join(Course.enrollments).filter_by(student_id=current_user.id).all()
+        for course in enrollments:
             join_room(f'course_{course.id}')
+            # Also join the general room for this course
+            join_room(f'room_{course.id}')
     
     return True
 
@@ -150,11 +161,13 @@ def handle_disconnect(sid=None):
     # Leave user's personal notification room
     leave_room(f'user_{current_user.id}')
     
-    # Leave all course rooms
+    # Leave course rooms
     if current_user.is_teacher:
         courses = Course.query.filter_by(teacher_id=current_user.id).all()
     else:
-        courses = Course.query.all()
-        
+        courses = Course.query.join(Course.enrollments).filter_by(student_id=current_user.id).all()
+    
     for course in courses:
         leave_room(f'course_{course.id}')
+        # Also leave the general room for this course
+        leave_room(f'room_{course.id}')
