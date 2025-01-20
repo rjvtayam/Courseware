@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get role selection elements
     const roleStudent = document.getElementById('roleStudent');
     const roleTeacher = document.getElementById('roleTeacher');
-    const googleBtn = document.querySelector('.btn-google');
-    const githubBtn = document.querySelector('.btn-github');
+    const googleBtn = document.querySelector('.google-btn');
+    const githubBtn = document.querySelector('.github-btn');
 
     // Function to update OAuth URLs with role parameter
     function updateOAuthUrls() {
