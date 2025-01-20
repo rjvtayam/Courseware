@@ -30,24 +30,8 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
         print("Converted database URL:", app.config['SQLALCHEMY_DATABASE_URI'])
 
-    # Initialize database with retries
-    max_retries = 3
-    retry_count = 0
-    while retry_count < max_retries:
-        try:
-            if not db.get_engine(app, bind=None):
-                db.init_app(app)
-            with app.app_context():
-                db.engine.connect()
-            break
-        except Exception as e:
-            retry_count += 1
-            print(f"Database connection attempt {retry_count} failed: {str(e)}")
-            if retry_count == max_retries:
-                raise
-            import time
-            time.sleep(1)  # Wait 1 second before retrying
-
+    # Initialize extensions
+    db.init_app(app)
     login_manager.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     
@@ -56,12 +40,27 @@ def create_app():
     if app.config.get('ELASTICSEARCH_URL'):
         elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']])
 
+    # Register blueprints and initialize models
     with app.app_context():
         # Import models
         from app.models.models import User, Course, Assignment, Feedback, Grade, Notification, Comment
         
-        # Create all database tables
-        db.create_all()
+        # Test database connection with retries
+        max_retries = 3
+        retry_count = 0
+        while retry_count < max_retries:
+            try:
+                db.engine.connect()
+                # Create all database tables
+                db.create_all()
+                break
+            except Exception as e:
+                retry_count += 1
+                print(f"Database connection attempt {retry_count} failed: {str(e)}")
+                if retry_count == max_retries:
+                    raise
+                import time
+                time.sleep(1)  # Wait 1 second before retrying
         
         # Import and register blueprints
         from app.routes import main, auth, courses, assignments, resources, workspace
