@@ -63,12 +63,22 @@ def create_app():
                 time.sleep(1)  # Wait 1 second before retrying
         
         # Import and register blueprints
-        from app.routes import main, auth, courses, assignments, resources, workspace
+        from app.routes import (
+            main, auth, courses, assignments, resources, 
+            workspace, search, notifications, feedback
+        )
+        
+        # Core blueprints
         app.register_blueprint(main.bp)
         app.register_blueprint(auth.bp)
         app.register_blueprint(courses.bp)
         app.register_blueprint(assignments.bp)
         app.register_blueprint(resources.bp)
         app.register_blueprint(workspace.bp)
+        
+        # Additional feature blueprints
+        app.register_blueprint(search.bp)
+        app.register_blueprint(notifications.bp)
+        app.register_blueprint(feedback.bp)
 
     return app
