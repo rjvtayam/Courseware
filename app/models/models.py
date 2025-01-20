@@ -103,6 +103,7 @@ class Course(db.Model):
     # Relationships
     assignments = db.relationship('Assignment', backref='course', lazy='dynamic')
     contents = db.relationship('CourseContent', back_populates='course', lazy='dynamic')
+    enrollments = db.relationship('Enrollment', backref='course', lazy='dynamic')
 
 class Assignment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

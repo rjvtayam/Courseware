@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template
 from flask_login import login_required, current_user
 from flask_socketio import emit, join_room, leave_room
-from app.models import Notification, Course, User
+from app.models import Notification, Course, User, Enrollment
 from app import socketio, db
 from datetime import datetime
 from sqlalchemy import desc
@@ -124,7 +124,6 @@ def send_course_notification(course_id, message, notification_type, exclude_user
     
     return notifications
 
-# WebSocket event handlers
 @socketio.on('connect')
 def handle_connect(auth=None):
     """Add user to their personal notification room and course rooms"""
@@ -144,11 +143,11 @@ def handle_connect(auth=None):
             join_room(f'room_{course.id}')
     else:
         # Students join rooms for courses they're enrolled in
-        enrollments = Course.query.join(Course.enrollments).filter_by(student_id=current_user.id).all()
-        for course in enrollments:
-            join_room(f'course_{course.id}')
+        enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
+        for enrollment in enrollments:
+            join_room(f'course_{enrollment.course_id}')
             # Also join the general room for this course
-            join_room(f'room_{course.id}')
+            join_room(f'room_{enrollment.course_id}')
     
     return True
 
@@ -165,9 +164,63 @@ def handle_disconnect(sid=None):
     if current_user.is_teacher:
         courses = Course.query.filter_by(teacher_id=current_user.id).all()
     else:
-        courses = Course.query.join(Course.enrollments).filter_by(student_id=current_user.id).all()
+        enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
+        courses = [enrollment.course for enrollment in enrollments]
     
     for course in courses:
         leave_room(f'course_{course.id}')
         # Also leave the general room for this course
         leave_room(f'room_{course.id}')
+
+@socketio.on('join')
+def on_join(data):
+    if current_user.is_authenticated:
+        course_id = data.get('course_id')
+        if course_id:
+            course = Course.query.get(course_id)
+            if course:
+                # Check if user is enrolled or is the teacher
+                is_enrolled = Enrollment.query.filter_by(
+                    student_id=current_user.id,
+                    course_id=course_id
+                ).first() is not None
+                
+                if is_enrolled or course.teacher_id == current_user.id:
+                    room = f'course_{course_id}'
+                    socketio.emit('joined_room', {'room': room}, room=room)
+
+@bp.route('/notifications/unread', methods=['GET'])
+@login_required
+def get_unread_notifications():
+    notifications = Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).order_by(Notification.created_at.desc()).all()
+    
+    return jsonify([{
+        'id': n.id,
+        'message': n.message,
+        'type': n.type,
+        'created_at': n.created_at.isoformat()
+    } for n in notifications])
+
+@bp.route('/notifications/mark_read/<int:notification_id>', methods=['POST'])
+@login_required
+def mark_notification_read(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+    if notification.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    notification.is_read = True
+    db.session.commit()
+    return jsonify({'status': 'success'})
+
+@bp.route('/notifications/mark_all_read', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    Notification.query.filter_by(
+        user_id=current_user.id,
+        is_read=False
+    ).update({'is_read': True})
+    db.session.commit()
+    return jsonify({'status': 'success'})
