@@ -20,7 +20,7 @@ def dashboard():
         courses = Course.query.all()
         teaching = False
     
-    return render_template('workspace/dashboard.html',
+    return render_template('workspace/index.html',
                          courses=courses,
                          teaching=teaching)
 
