@@ -233,72 +233,84 @@ def course_room(course_id):
 @socketio.on('join_course_room')
 def handle_join_room(data):
     """Join a course room"""
-    course_id = data.get('course_id')
-    if not course_id:
+    try:
+        course_id = data.get('course_id')
+        if not course_id:
+            return False
+        
+        course = Course.query.get(course_id)
+        if not course:
+            return False
+        
+        # Verify user has access to this course
+        if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+            return False
+        
+        room = f'course_{course_id}'
+        join_room(room)
+        
+        # Notify others in the room
+        emit('user_joined', {
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'timestamp': datetime.utcnow().isoformat()
+        }, room=room)
+        
+        return True
+    except Exception as e:
+        print(f"Error in handle_join_room: {str(e)}")
         return False
-    
-    course = Course.query.get(course_id)
-    if not course:
-        return False
-    
-    # Verify user has access to this course
-    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
-        return False
-    
-    room = f'course_{course_id}'
-    join_room(room)
-    
-    # Notify others in the room
-    emit('user_joined', {
-        'user_id': current_user.id,
-        'username': current_user.username,
-        'timestamp': datetime.utcnow().isoformat()
-    }, room=room)
-    
-    return True
 
 @socketio.on('leave_course_room')
 def handle_leave_room(data):
     """Leave a course room"""
-    course_id = data.get('course_id')
-    if not course_id:
+    try:
+        course_id = data.get('course_id')
+        if not course_id:
+            return False
+        
+        room = f'course_{course_id}'
+        leave_room(room)
+        
+        # Notify others in the room
+        emit('user_left', {
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'timestamp': datetime.utcnow().isoformat()
+        }, room=room)
+        
+        return True
+    except Exception as e:
+        print(f"Error in handle_leave_room: {str(e)}")
         return False
-    
-    room = f'course_{course_id}'
-    leave_room(room)
-    
-    # Notify others in the room
-    emit('user_left', {
-        'user_id': current_user.id,
-        'username': current_user.username,
-        'timestamp': datetime.utcnow().isoformat()
-    }, room=room)
-    
-    return True
 
 @socketio.on('course_message')
 def handle_course_message(data):
     """Handle course room messages"""
-    course_id = data.get('course_id')
-    message = data.get('message')
-    
-    if not course_id or not message:
+    try:
+        course_id = data.get('course_id')
+        message = data.get('message')
+        
+        if not course_id or not message:
+            return False
+        
+        course = Course.query.get(course_id)
+        if not course:
+            return False
+        
+        # Verify user has access to this course
+        if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
+            return False
+        
+        # Broadcast message to room
+        emit('room_message', {
+            'user_id': current_user.id,
+            'username': current_user.username,
+            'message': message,
+            'timestamp': datetime.utcnow().isoformat()
+        }, room=f'course_{course_id}')
+        
+        return True
+    except Exception as e:
+        print(f"Error in handle_course_message: {str(e)}")
         return False
-    
-    course = Course.query.get(course_id)
-    if not course:
-        return False
-    
-    # Verify user has access to this course
-    if not (current_user.id == course.teacher_id or course in current_user.courses_enrolled):
-        return False
-    
-    # Broadcast message to room
-    emit('room_message', {
-        'user_id': current_user.id,
-        'username': current_user.username,
-        'message': message,
-        'timestamp': datetime.utcnow().isoformat()
-    }, room=f'course_{course_id}')
-    
-    return True
