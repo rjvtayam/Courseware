@@ -31,40 +31,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-book"></i> Courses
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">BSIT Programs</h6></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='web-mobile') }}">Web & Mobile Development</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='animation') }}">Animation & Motion Graphics</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='networking') }}">Networking</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='service-management') }}">Service Management</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">BSCS Programs</h6></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='graphics') }}">Graphics & Visualization</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='game-dev') }}">Game Animation</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">BSIS Programs</h6></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='info-security') }}">Information Security</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('courses.category', category='data-analytics') }}">Data Analytics</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Resources
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('resources.documentation') }}">Documentation</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.tools') }}">Development Tools</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('resources.online_platforms') }}">Online Platforms</a></li>
-                        </ul>
-                    </li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <form class="d-flex me-3" action="{{ url_for('search.search') }}" method="get">
-                        <input class="form-control" type="search" name="q" placeholder="Search courses..." aria-label="Search">
+                        <input class="form-control" type="search" name="q" placeholder="Search..." aria-label="Search">
                         <button class="btn btn-outline-primary ms-2" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
@@ -120,7 +90,6 @@
                 <div class="col-md-4">
                     <h5>Quick Links</h5>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('courses.index') }}">Courses</a></li>
                         <li><a href="#">About Us</a></li>
                         <li><a href="#">Contact</a></li>
                         <li><a href="#">Privacy Policy</a></li>

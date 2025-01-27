@@ -1,5 +1,24 @@
-// Initialize Socket.IO connection
-const socket = io();
+// Initialize Socket.IO connection with configuration
+const socket = io({
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    timeout: 20000,
+});
+
+// Handle connection events
+socket.on('connect', () => {
+    console.log('Connected to server');
+});
+
+socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+});
+
+socket.on('disconnect', (reason) => {
+    console.log('Disconnected:', reason);
+});
 
 // Notification sound
 const notificationSound = new Audio('/static/sounds/notification.mp3');

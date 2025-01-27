@@ -9,7 +9,14 @@ import os
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
-socketio = SocketIO()
+socketio = SocketIO(
+    cors_allowed_origins="*",
+    ping_timeout=20,
+    ping_interval=25,
+    async_mode='eventlet',
+    logger=True,
+    engineio_logger=True
+)
 elasticsearch = None
 
 def create_app():
@@ -33,11 +40,7 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    socketio.init_app(app, 
-                     cors_allowed_origins="*",
-                     manage_session=False,
-                     ping_timeout=60,
-                     ping_interval=25)
+    socketio.init_app(app)
     
     # Initialize Elasticsearch if configured
     global elasticsearch
@@ -68,16 +71,14 @@ def create_app():
         
         # Import and register blueprints
         from app.routes import (
-            main, auth, courses, assignments, resources, 
+            main, auth, assignments, 
             workspace, search, notifications, feedback
         )
         
         # Core blueprints
         app.register_blueprint(main.bp)
         app.register_blueprint(auth.bp)
-        app.register_blueprint(courses.bp)
         app.register_blueprint(assignments.bp)
-        app.register_blueprint(resources.bp)
         app.register_blueprint(workspace.bp)
         
         # Additional feature blueprints
